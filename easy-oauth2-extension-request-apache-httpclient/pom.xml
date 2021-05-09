@@ -8,20 +8,25 @@
         <artifactId>easy-oauth2</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>easy-oauth2-core</artifactId>
+    <artifactId>easy-oauth2-extension-request-apache-httpclient</artifactId>
     <packaging>jar</packaging>
 
-    <description>The core module of easy-oauth2.</description>
+    <description>The extension module for request (based on apache-httpclient) of easy-oauth2.</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.wautsns</groupId>
+            <artifactId>easy-oauth2-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
 
         <dependency>

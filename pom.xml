@@ -41,6 +41,11 @@
 
     <modules>
         <module>easy-oauth2-core</module>
+
+        <module>easy-oauth2-extension-client-builtin</module>
+        <module>easy-oauth2-extension-request-apache-httpclient</module>
+
+        <module>easy-oauth2-assembly</module>
     </modules>
 
     <properties>
@@ -77,7 +82,23 @@
         <dependencies>
             <dependency>
                 <groupId>com.github.wautsns</groupId>
+                <artifactId>easy-oauth2-assembly</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.github.wautsns</groupId>
                 <artifactId>easy-oauth2-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.wautsns</groupId>
+                <artifactId>easy-oauth2-extension-client-builtin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.wautsns</groupId>
+                <artifactId>easy-oauth2-extension-request-apache-httpclient</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

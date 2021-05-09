@@ -1,0 +1,138 @@
+/*
+ * Copyright 2021 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.github.wautsns.easy.oauth2.core.request.executor;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * OAuth2 request executor factory manager.
+ *
+ * <ul>
+ * <li style="list-style-type:none">########## Notes ###############</li>
+ * <li>{@link OAuth2RequestExecutorFactory} that has implemented java spi will be automatically registered.</li>
+ * </ul>
+ *
+ * @author wautsns
+ * @since Mar 31, 2021
+ */
+public final class OAuth2RequestExecutorFactoryManager {
+
+    /** Logger. */
+    private static final Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
+
+    // ######################################################################################
+
+    /** Factory group by identifier. */
+    private static final @NotNull Map<@NotNull String, @NotNull OAuth2RequestExecutorFactory<?>> factoryGroupByIdentifier = new ConcurrentHashMap<>();
+
+    // Register OAuth2RequestExecutorFactory automatically through java spi.
+    static {
+        log.info("Ready to register factories automatically through java spi.");
+        ServiceLoader.load(OAuth2RequestExecutorFactory.class)
+                .forEach(OAuth2RequestExecutorFactoryManager::register);
+        log.info("All factories that have implemented java spi have been automatically registered.");
+    }
+
+    // ######################################################################################
+    // #################### enhanced getter #################################################
+    // ######################################################################################
+
+    /**
+     * Return any enabled factory.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If there is no enabled factory registered in {@code this} manager, an {@link IllegalStateException} will be
+     * thrown.</li>
+     * </ul>
+     *
+     * @return factory
+     */
+    public static @NotNull OAuth2RequestExecutorFactory<?> any() {
+        return factoryGroupByIdentifier.values().stream()
+                .filter(OAuth2RequestExecutorFactory::isEnabled)
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("There is no enabled factory in this manager."));
+    }
+
+    /**
+     * Return an enabled factory with the given {@code identifier}.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If there is no enabled factory with the {@code identifier} registered in {@code this} manager, an {@link
+     * IllegalStateException} will be thrown.</li>
+     * </ul>
+     *
+     * @param identifier identifier
+     * @return factory with the given {@code identifier}
+     */
+    public static @NotNull OAuth2RequestExecutorFactory<?> one(@NotNull String identifier) {
+        OAuth2RequestExecutorFactory<?> factory = factoryGroupByIdentifier.get(identifier);
+        if (factory == null) {
+            throw new IllegalStateException(String.format("There is no factory with the identifier %s.", identifier));
+        } else if (factory.isEnabled()) {
+            return factory;
+        } else {
+            throw new IllegalStateException(
+                    String.format("The factory with the identifier %s is not enabled.", identifier)
+            );
+        }
+    }
+
+    // ######################################################################################
+    // #################### enhanced setter #################################################
+    // ######################################################################################
+
+    /**
+     * Register the given {@code factory} and return previous.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If the identifier of the {@code factory} already exists in {@code this} manager, the previous will be
+     * replaced.</li>
+     * </ul>
+     *
+     * @param <Q> the type of actual request
+     * @param factory oauth2 request executor factory
+     * @return previous factory with the same identifier as the {@code factory}, or {@code null} if not exists
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <Q> @Nullable OAuth2RequestExecutorFactory<Q> register(
+            @NotNull OAuth2RequestExecutorFactory<Q> factory) {
+        String identifier = factory.identifier();
+        OAuth2RequestExecutorFactory previous = factoryGroupByIdentifier.put(identifier, factory);
+        if (previous == null) {
+            log.info("The factory with identifier {} has been registered.", identifier);
+        } else {
+            log.warn(
+                    "{} and {} have the same identifier {}, and the previous has been replaced.",
+                    previous, factory, identifier
+            );
+        }
+        return previous;
+    }
+
+    /** Static Manager. */
+    private OAuth2RequestExecutorFactoryManager() {}
+
+}

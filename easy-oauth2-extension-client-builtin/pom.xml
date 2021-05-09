@@ -8,20 +8,20 @@
         <artifactId>easy-oauth2</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>easy-oauth2-core</artifactId>
+    <artifactId>easy-oauth2-extension-client-builtin</artifactId>
     <packaging>jar</packaging>
 
-    <description>The core module of easy-oauth2.</description>
+    <description>The extension module for builtin client of easy-oauth2.</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
+            <groupId>com.github.wautsns</groupId>
+            <artifactId>easy-oauth2-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
 
         <dependency>
@@ -29,6 +29,11 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.wautsns</groupId>
+            <artifactId>easy-oauth2-extension-request-apache-httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -61,6 +66,14 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Involving oauth2 authorization operations, only manual testing can be performed. -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
