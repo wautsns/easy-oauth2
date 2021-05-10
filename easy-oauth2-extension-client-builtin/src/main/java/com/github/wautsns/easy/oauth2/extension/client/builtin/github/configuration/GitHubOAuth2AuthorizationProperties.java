@@ -19,7 +19,7 @@ import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2Au
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,7 @@ public final class GitHubOAuth2AuthorizationProperties extends AbstractOAuth2Aut
      * scope, a third web flow that does not provide a <code>scope</code> will receive a token with <code>user</code>
      * and <code>repo</code> scope.
      */
-    private LinkedHashSet<GitHubOAuth2Scope> scopes;
+    private List<GitHubOAuth2Scope> scopes;
     /**
      * Whether or not unauthenticated users will be offered an option to sign up for GitHub during the OAuth flow. The
      * default is <code>true</code>. Use <code>false</code> when a policy prohibits signups.
@@ -102,11 +102,11 @@ public final class GitHubOAuth2AuthorizationProperties extends AbstractOAuth2Aut
     // #################### getter / setter #################################################
     // ######################################################################################
 
-    public LinkedHashSet<GitHubOAuth2Scope> getScopes() {
+    public List<GitHubOAuth2Scope> getScopes() {
         return scopes;
     }
 
-    public GitHubOAuth2AuthorizationProperties setScopes(LinkedHashSet<GitHubOAuth2Scope> scopes) {
+    public GitHubOAuth2AuthorizationProperties setScopes(List<GitHubOAuth2Scope> scopes) {
         this.scopes = scopes;
         return this;
     }

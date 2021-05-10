@@ -27,7 +27,6 @@ import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configurati
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 /**
  * Test {@link GiteeOAuth2Client}.
@@ -60,10 +59,10 @@ public class GiteeOAuth2ClientTest extends AbstractOAuth2ClientTest {
                         .setClientSecret(clientSecret)
                         .setCallbacks(Arrays.asList(callbackURL.split(";"))),
                 new GiteeOAuth2AuthorizationProperties()
-                        .setPermissions(new LinkedHashSet<>(Arrays.asList(
+                        .setPermissions(Arrays.asList(
                                 GiteeOAuth2Permission.USER_INFO,
                                 GiteeOAuth2Permission.EMAILS
-                        ))),
+                        )),
                 OAuth2RequestExecutorFactoryManager.any().create(
                         new OAuth2RequestExecutorProperties()
                                 .setConnectTimeout(Duration.ofSeconds(20))

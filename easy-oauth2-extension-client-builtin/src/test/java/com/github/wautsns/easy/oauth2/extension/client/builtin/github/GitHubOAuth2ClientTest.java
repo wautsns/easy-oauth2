@@ -27,7 +27,6 @@ import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configurat
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 /**
  * Test {@link GitHubOAuth2Client}.
@@ -60,10 +59,10 @@ public class GitHubOAuth2ClientTest extends AbstractOAuth2ClientTest {
                         .setClientSecret(clientSecret)
                         .setAuthorizeCallbackURL(callbackURL),
                 new GitHubOAuth2AuthorizationProperties()
-                        .setScopes(new LinkedHashSet<>(Arrays.asList(
+                        .setScopes(Arrays.asList(
                                 GitHubOAuth2Scope.NOTIFICATIONS,
                                 GitHubOAuth2Scope.USER_EMAIL
-                        )))
+                        ))
                         .setAllowSignup(Boolean.TRUE),
                 OAuth2RequestExecutorFactoryManager.any().create(
                         new OAuth2RequestExecutorProperties()

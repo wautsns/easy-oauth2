@@ -19,7 +19,7 @@ import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2Au
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2AuthorizationProperties {
 
     /** Permissions. */
-    private LinkedHashSet<GiteeOAuth2Permission> permissions;
+    private List<GiteeOAuth2Permission> permissions;
 
     // ######################################################################################
     // #################### enhanced getter #################################################
@@ -77,11 +77,11 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
     // #################### getter / setter #################################################
     // ######################################################################################
 
-    public LinkedHashSet<GiteeOAuth2Permission> getPermissions() {
+    public List<GiteeOAuth2Permission> getPermissions() {
         return permissions;
     }
 
-    public GiteeOAuth2AuthorizationProperties setPermissions(LinkedHashSet<GiteeOAuth2Permission> permissions) {
+    public GiteeOAuth2AuthorizationProperties setPermissions(List<GiteeOAuth2Permission> permissions) {
         this.permissions = permissions;
         return this;
     }
