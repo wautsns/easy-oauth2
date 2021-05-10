@@ -56,7 +56,7 @@ public abstract class AbstractTokenAvailableOAuth2Client<A extends AbstractOAuth
     // #########################################################################################
 
     @Override
-    public @NotNull T exchangeForToken(@NotNull OAuth2CallbackQuery query) throws OAuth2Exception {
+    public final @NotNull T exchangeForToken(@NotNull OAuth2CallbackQuery query) throws OAuth2Exception {
         log.debug("Ready to exchange callback query for token. callbackQuery: {}", query.raw());
         try {
             T token = exchangeCallbackQueryForToken.exchangeForToken(query);
