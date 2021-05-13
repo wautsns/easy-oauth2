@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public final class OAuth2RequestExecutorFactoryBasedOnApacheHttpclient implements OAuth2RequestExecutorFactory<HttpRequestBase> {
 
     @Override
-    public boolean isEnabled() {
+    public boolean enabled() {
         try {
             Class.forName("org.apache.http.client.HttpClient");
             return true;
@@ -39,7 +39,8 @@ public final class OAuth2RequestExecutorFactoryBasedOnApacheHttpclient implement
     }
 
     @Override
-    public @NotNull OAuth2RequestExecutorBasedOnApacheHttpclient create(@NotNull OAuth2RequestExecutorProperties properties) {
+    public @NotNull OAuth2RequestExecutorBasedOnApacheHttpclient create(
+            @NotNull OAuth2RequestExecutorProperties properties) {
         return new OAuth2RequestExecutorBasedOnApacheHttpclient(properties);
     }
 

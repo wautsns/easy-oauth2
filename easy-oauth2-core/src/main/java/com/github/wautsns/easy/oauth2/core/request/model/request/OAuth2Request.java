@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * OAuth2 request.
  *
- * @param <E> the type of entity
+ * @param <E> the actual type of {@link AbstractOAuth2RequestEntity}
  * @author wautsns
  * @since Mar 27, 2021
  */
@@ -39,9 +39,9 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /** Entity. */
     private @Nullable E entity;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     /**
      * Return method.
@@ -64,7 +64,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return headers.
      *
-     * @return headers, or {@code null} if headers do not assign
+     * @return headers, or {@code null} if the headers do not assign
      */
     public @Nullable OAuth2Headers headers() {
         return headers;
@@ -73,13 +73,13 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return entity.
      *
-     * @return entity, or {@code null} if entity does not assign
+     * @return entity, or {@code null} if the entity does not assign
      */
     public @Nullable E entity() {
         return entity;
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
      * Return a new instance by deep copying {@code this} object.
@@ -89,18 +89,13 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
      * @param shareEntity whether to share entity
      * @return a copy of {@code this} object
      */
-    @SuppressWarnings("unchecked")
     public @NotNull OAuth2Request<E> copy(boolean shareURL, boolean shareHeaders, boolean shareEntity) {
-        return new OAuth2Request<>(
-                method, shareURL ? this.url : this.url.copy(),
-                (shareHeaders || (this.headers == null)) ? this.headers : this.headers.copy(),
-                (E) ((shareEntity || (this.entity == null)) ? this.entity : this.entity.copy())
-        );
+        return new OAuth2Request<>(this, shareURL, shareHeaders, shareEntity);
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
      * Assign headers.
@@ -124,9 +119,9 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
         return this;
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
@@ -140,30 +135,31 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     }
 
     /**
-     * Construct an instance.
+     * Construct an instance by deep copying {@code template}.
      *
-     * @param method method
-     * @param url url
-     * @param headers headers
-     * @param entity request entity
+     * @param template template
+     * @param shareURL whether to share url
+     * @param shareHeaders whether to share headers
+     * @param shareEntity whether to share entity
      * @see #copy(boolean, boolean, boolean)
      */
+    @SuppressWarnings("unchecked")
     protected OAuth2Request(
-            @NotNull OAuth2RequestMethod method, @NotNull OAuth2URL url,
-            @Nullable OAuth2Headers headers, @Nullable E entity) {
-        this.method = method;
-        this.url = url;
-        this.headers = headers;
-        this.entity = entity;
+            @NotNull OAuth2Request<E> template, boolean shareURL, boolean shareHeaders, boolean shareEntity) {
+        this.method = template.method;
+        this.url = shareURL ? template.url.copy() : template.url;
+        this.headers = (shareHeaders && (template.headers != null)) ? template.headers.copy() : template.headers;
+        this.entity = (shareEntity && (template.entity != null)) ? (E) template.entity.copy() : template.entity;
     }
 
-    // ######################################################################################
-    // #################### stringifier #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
 
     @Override
-    public @NotNull String toString() {
-        return "{method=" + method +
+    public String toString() {
+        return "OAuth2Request{" +
+                "method=" + method +
                 ", url=" + url +
                 ", headers=" + headers +
                 ", entity=" + entity +

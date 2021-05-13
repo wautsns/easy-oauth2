@@ -15,7 +15,7 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration;
 
-import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2AuthorizationProperties;
+import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
@@ -34,26 +34,26 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
     /** Permissions. */
     private List<GiteeOAuth2Permission> permissions;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     @Override
-    public @NotNull String platformIdentifier() {
-        return BuiltinOAuth2Platform.GITEE.getIdentifier();
+    public @NotNull String platform() {
+        return BuiltinOAuth2Platform.GITEE.identifier();
     }
 
-    // ######################################################################################
-    // #################### append ##########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### add to query ################################################
+    // ##################################################################################
 
     /**
-     * Append `scope` to the {@code url}.
+     * Add `scope` to the {@code url} query.
      *
      * @param url url
      * @return self reference
      */
-    public @NotNull GiteeOAuth2AuthorizationProperties appendScope(OAuth2URL url) {
+    public @NotNull GiteeOAuth2AuthorizationProperties addScopeToQuery(OAuth2URL url) {
         if (permissions == null) { return this; }
         String scope = permissions.stream()
                 .map(GiteeOAuth2Permission::value)
@@ -62,20 +62,18 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
         return this;
     }
 
-    // ######################################################################################
-    // #################### validate ########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### validate ####################################################
+    // ##################################################################################
 
     @Override
     public void validate() {
-        if ((permissions != null) && permissions.stream().anyMatch(Objects::isNull)) {
-            throw new IllegalArgumentException("Permissions cannot contain null.");
-        }
+        if (permissions != null) { permissions.forEach(Objects::requireNonNull); }
     }
 
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### getter / setter #############################################
+    // ##################################################################################
 
     public List<GiteeOAuth2Permission> getPermissions() {
         return permissions;

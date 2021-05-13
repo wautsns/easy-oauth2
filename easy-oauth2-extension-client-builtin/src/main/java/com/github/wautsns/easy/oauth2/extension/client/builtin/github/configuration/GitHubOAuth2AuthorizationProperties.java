@@ -15,7 +15,7 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration;
 
-import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2AuthorizationProperties;
+import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
@@ -48,26 +48,26 @@ public final class GitHubOAuth2AuthorizationProperties extends AbstractOAuth2Aut
      */
     private Boolean allowSignup;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     @Override
-    public @NotNull String platformIdentifier() {
-        return BuiltinOAuth2Platform.GITHUB.getIdentifier();
+    public @NotNull String platform() {
+        return BuiltinOAuth2Platform.GITHUB.identifier();
     }
 
-    // ######################################################################################
-    // #################### append ##########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### add to query ################################################
+    // ##################################################################################
 
     /**
-     * Append `scope` to the {@code url}.
+     * Add `scope` to the {@code url} query.
      *
      * @param url url
      * @return self reference
      */
-    public @NotNull GitHubOAuth2AuthorizationProperties appendScope(OAuth2URL url) {
+    public @NotNull GitHubOAuth2AuthorizationProperties addScopeToQuery(OAuth2URL url) {
         if (scopes == null) { return this; }
         String scope = scopes.stream()
                 .map(GitHubOAuth2Scope::value)
@@ -77,30 +77,28 @@ public final class GitHubOAuth2AuthorizationProperties extends AbstractOAuth2Aut
     }
 
     /**
-     * Append `allow_signup` to the {@code url}.
+     * Add `allow_signup` to the {@code url} query.
      *
      * @param url url
      * @return self reference
      */
-    public @NotNull GitHubOAuth2AuthorizationProperties appendAllowSignup(OAuth2URL url) {
+    public @NotNull GitHubOAuth2AuthorizationProperties addAllowSignupToQuery(OAuth2URL url) {
         if (allowSignup != null) { url.query().unique("allow_signup", allowSignup.toString()); }
         return this;
     }
 
-    // ######################################################################################
-    // #################### validate ########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### validate ####################################################
+    // ##################################################################################
 
     @Override
     public void validate() {
-        if ((scopes != null) && scopes.stream().anyMatch(Objects::isNull)) {
-            throw new IllegalArgumentException("Scopes cannot contain null.");
-        }
+        if (scopes != null) { scopes.forEach(Objects::requireNonNull); }
     }
 
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### getter / setter #############################################
+    // ##################################################################################
 
     public List<GitHubOAuth2Scope> getScopes() {
         return scopes;

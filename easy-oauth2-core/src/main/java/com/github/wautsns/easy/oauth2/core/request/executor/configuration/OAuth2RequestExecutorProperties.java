@@ -28,7 +28,7 @@ import java.util.Map;
 public final class OAuth2RequestExecutorProperties {
 
     /**
-     * Default oauth2 request executor properties.
+     * Default request executor properties.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
@@ -42,18 +42,18 @@ public final class OAuth2RequestExecutorProperties {
      */
     public static final OAuth2RequestExecutorProperties DEFAULT = new OAuth2RequestExecutorProperties()
             .setConnectTimeout(Duration.parse("PT2S"))
-            .setReadTimeout(Duration.parse("PT5S"))
+            .setSocketTimeout(Duration.parse("PT5S"))
             .setMaxConcurrentRequests(64)
             .setMaxIdleTime(Duration.parse("PT5M"))
             .setKeepAliveTimeout(Duration.parse("PT3M"))
             .setRetryTimes(1);
 
-    // ######################################################################################
+    // ##################################################################################
 
     /** Connect timeout. */
     private Duration connectTimeout;
-    /** Read timeout. */
-    private Duration readTimeout;
+    /** Socket timeout. */
+    private Duration socketTimeout;
     /** Max concurrent requests. */
     private Integer maxConcurrentRequests;
     /** Max idle time of connection. */
@@ -67,18 +67,24 @@ public final class OAuth2RequestExecutorProperties {
     /** Custom properties. */
     private Map<String, String> custom;
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
      * Rewrite properties which value is {@code null} to {@link #DEFAULT} value.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>Even after the method is executed, there is no guarantee that properties is certainly non-null (dependent on
+     * {@link #DEFAULT}).</li>
+     * </ul>
      *
      * @return self reference
      */
     public OAuth2RequestExecutorProperties rewriteNullToDefaultValue() {
         if (connectTimeout == null) { connectTimeout = DEFAULT.connectTimeout; }
-        if (readTimeout == null) { readTimeout = DEFAULT.readTimeout; }
+        if (socketTimeout == null) { socketTimeout = DEFAULT.socketTimeout; }
         if (maxConcurrentRequests == null) { maxConcurrentRequests = DEFAULT.maxConcurrentRequests; }
         if (maxIdleTime == null) { maxIdleTime = DEFAULT.maxIdleTime; }
         if (keepAliveTimeout == null) { keepAliveTimeout = DEFAULT.keepAliveTimeout; }
@@ -88,15 +94,15 @@ public final class OAuth2RequestExecutorProperties {
         return this;
     }
 
-    // ######################################################################################
-    // #################### stringifier #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
 
     @Override
     public String toString() {
         return "OAuth2RequestExecutorProperties{" +
                 "connectTimeout=" + connectTimeout +
-                ", readTimeout=" + readTimeout +
+                ", readTimeout=" + socketTimeout +
                 ", maxConcurrentRequests=" + maxConcurrentRequests +
                 ", maxIdleTime=" + maxIdleTime +
                 ", keepAliveTimeout=" + keepAliveTimeout +
@@ -106,9 +112,9 @@ public final class OAuth2RequestExecutorProperties {
                 '}';
     }
 
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### getter / setter #############################################
+    // ##################################################################################
 
     public Duration getConnectTimeout() {
         return connectTimeout;
@@ -119,12 +125,12 @@ public final class OAuth2RequestExecutorProperties {
         return this;
     }
 
-    public Duration getReadTimeout() {
-        return readTimeout;
+    public Duration getSocketTimeout() {
+        return socketTimeout;
     }
 
-    public OAuth2RequestExecutorProperties setReadTimeout(Duration readTimeout) {
-        this.readTimeout = readTimeout;
+    public OAuth2RequestExecutorProperties setSocketTimeout(Duration socketTimeout) {
+        this.socketTimeout = socketTimeout;
         return this;
     }
 

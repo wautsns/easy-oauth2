@@ -42,19 +42,18 @@ public final class OAuth2DataUtils {
     /** Object mapper. */
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    // ######################################################################################
-    // #################### read ############################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### read ########################################################
+    // ##################################################################################
 
     /**
      * Read the given {@code inputStream} as text.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>Content of {@code inputStream} should be readable.</li>
-     * <li>If the {@code inputStream} is {@code null}, {@code null} will be returned, otherwise a nonnull text will be
-     * certainly returned.</li>
-     * <li>The {@code inputStream} will be automatically closed through {@code try-with-resource}.</li>
+     * <li>The content of the {@code inputStream} must be readable text.</li>
+     * <li>If the {@code inputStream} is {@code null}, {@code null} will be returned.</li>
+     * <li>The {@code inputStream} will be automatically closed through try-with-resource.</li>
      * </ul>
      *
      * @param inputStream input stream
@@ -77,47 +76,46 @@ public final class OAuth2DataUtils {
     }
 
     /**
-     * Read the given {@code inputStream} as tree.
+     * Read the given {@code jsonInputStream} as a tree.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>Content of the {@code inputStream} should be json.</li>
-     * <li>If the {@code inputStream} is {@code null} or contains nothing, a {@link MissingNode} will be returned. In
-     * any case, the method will not return {@code null}.</li>
-     * <li>The {@code inputStream} will be automatically closed through {@code try-with-resource}.</li>
+     * <li>The content of the {@code jsonInputStream} must be json.</li>
+     * <li>If the {@code jsonInputStream} is {@code null} or does not contain any content, {@link
+     * MissingNode#getInstance() instance} of {@link MissingNode} will be returned.</li>
+     * <li>The {@code jsonInputStream} will be automatically closed through try-with-resource.</li>
      * </ul>
      *
-     * @param inputStream input stream
+     * @param jsonInputStream json input stream
      * @return root node of the tree
      * @throws OAuth2IOException if an I/O error occurs
      */
-    public static @NotNull JsonNode readJSONAsTree(@Nullable InputStream inputStream) throws OAuth2IOException {
-        if (inputStream == null) { return MissingNode.getInstance(); }
-        try (InputStream jsonInputStreamForClosing = inputStream) {
-            JsonNode root = OBJECT_MAPPER.readTree(inputStream);
+    public static @NotNull JsonNode readJSONInputStreamAsTree(@Nullable InputStream jsonInputStream) throws OAuth2IOException {
+        if (jsonInputStream == null) { return MissingNode.getInstance(); }
+        try (InputStream jsonInputStreamForClosing = jsonInputStream) {
+            JsonNode root = OBJECT_MAPPER.readTree(jsonInputStream);
             return (root != null) ? root : MissingNode.getInstance();
         } catch (IOException e) {
             throw new OAuth2IOException(e);
         }
     }
 
-    // ######################################################################################
-    // #################### write ###########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### convert #####################################################
+    // ##################################################################################
 
     /**
-     * Write the given {@code object} as json.
+     * Convert the given {@code object} to json.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code object} is {@code null}, the text {@code "null"} will be returned. In any case, the method
-     * will not return {@code null}.</li>
+     * <li>If the {@code object} is {@code null}, an empty text {@code ""} will be returned.</li>
      * </ul>
      *
      * @param object object
      * @return json
      */
-    public static @NotNull String writeObjectAsJSON(@Nullable Object object) {
+    public static @NotNull String convertObjectToJSON(@Nullable Object object) {
         try {
             return OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -126,18 +124,17 @@ public final class OAuth2DataUtils {
     }
 
     /**
-     * Write the given {@code object} as json bytes.
+     * Convert the given {@code object} to json bytes.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code object} is {@code null}, bytes of text {@code "null"} will be returned. In any case, the
-     * method will not return {@code null}.</li>
+     * <li>If the {@code object} is {@code null}, bytes of the text {@code "null"} will be returned.</li>
      * </ul>
      *
      * @param object object
      * @return json bytes
      */
-    public static byte @NotNull [] writeObjectAsJSONBytes(@Nullable Object object) {
+    public static byte @NotNull [] convertObjectToJSONBytes(@Nullable Object object) {
         try {
             return OBJECT_MAPPER.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
@@ -145,17 +142,13 @@ public final class OAuth2DataUtils {
         }
     }
 
-    // ######################################################################################
-    // #################### convert #########################################################
-    // ######################################################################################
-
     /**
-     * Convert the given {@code object} to tree.
+     * Convert the given {@code object} to a tree.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code object} is {@code null}, a {@link NullNode} will be returned. In any case, the method will not
-     * return {@code null}.</li>
+     * <li>If the {@code object} is {@code null}, an {@link NullNode#getInstance() instance} of {@link NullNode} will
+     * be returned.</li>
      * </ul>
      *
      * @param object object
@@ -165,45 +158,44 @@ public final class OAuth2DataUtils {
         return OBJECT_MAPPER.valueToTree(object);
     }
 
-    // ######################################################################################
-    // #################### encode ##########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### encode ######################################################
+    // ##################################################################################
 
     /**
-     * Encode the given {@code value} with {@link URLEncoder}.
+     * Encode the given {@code text} with {@link URLEncoder}.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code value} is {@code null}, {@code null} will be returned, otherwise a nonnull url-encoded text
-     * will be certainly returned.</li>
+     * <li>If the {@code text} is {@code null}, {@code null} will be returned.</li>
      * </ul>
      *
-     * @param value value
-     * @return url-encoded value, or {@code null} if the {@code value} is {@code null}
+     * @param text text
+     * @return url encoded text, or {@code null} if the {@code value} is {@code null}
      */
-    public static @Nullable String encodeWithURLEncoder(@Nullable String value) {
-        if (value == null) { return null; }
+    public static @Nullable String encodeWithURLEncoder(@Nullable String text) {
+        if (text == null) { return null; }
         try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+            return URLEncoder.encode(text, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    // ######################################################################################
-    // #################### new #############################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### create ######################################################
+    // ##################################################################################
 
     /**
-     * Return a new object node.
+     * Create a new object node.
      *
      * @return object node
      */
-    public static @NotNull ObjectNode newObjectNode() {
+    public static @NotNull ObjectNode createObjectNode() {
         return OBJECT_MAPPER.createObjectNode();
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /** Utility. */
     private OAuth2DataUtils() {}

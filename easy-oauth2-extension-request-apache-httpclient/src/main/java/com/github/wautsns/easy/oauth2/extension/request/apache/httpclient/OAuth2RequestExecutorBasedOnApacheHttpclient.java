@@ -51,9 +51,9 @@ public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends Abstract
     /** Raw http client. */
     private final @NotNull HttpClient raw;
 
-    // #########################################################################################
-    // #################### implement protected abstract method ################################
-    // #########################################################################################
+    // ##################################################################################
+    // #################### request related operation ###################################
+    // ##################################################################################
 
     @Override
     protected @NotNull HttpRequestBase initializeActualRequest(
@@ -98,9 +98,9 @@ public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends Abstract
         return new OAuth2ResponseBasedOnApacheHttpclient(raw.execute(actualRequest));
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
@@ -114,8 +114,8 @@ public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends Abstract
         if (properties.getConnectTimeout() != null) {
             requestConfigBuilder.setConnectTimeout((int) properties.getConnectTimeout().toMillis());
         }
-        if (properties.getReadTimeout() != null) {
-            requestConfigBuilder.setSocketTimeout((int) properties.getReadTimeout().toMillis());
+        if (properties.getSocketTimeout() != null) {
+            requestConfigBuilder.setSocketTimeout((int) properties.getSocketTimeout().toMillis());
         }
         builder.setDefaultRequestConfig(requestConfigBuilder.build());
         // Set connect manager.

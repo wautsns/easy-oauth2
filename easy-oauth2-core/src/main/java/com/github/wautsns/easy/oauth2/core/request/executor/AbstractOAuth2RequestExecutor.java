@@ -18,6 +18,7 @@ package com.github.wautsns.easy.oauth2.core.request.executor;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2IOException;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2Headers;
+import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.core.request.model.request.AbstractOAuth2RequestEntity;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2Request;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2RequestMethod;
@@ -30,7 +31,7 @@ import java.io.IOException;
 /**
  * Abstract oauth2 request executor.
  *
- * @param <Q> the type of actual request
+ * @param <Q> the actual type of request
  * @author wautsns
  * @since Mar 27, 2021
  */
@@ -39,27 +40,23 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
     /** Logger. */
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
      * Execute the given {@code request}.
      *
      * @param request request
      * @return response
-     * @throws OAuth2Exception if oauth2 related error occurs
+     * @throws OAuth2Exception if an oauth2 related error occurs
      */
     public final @NotNull AbstractOAuth2Response execute(@NotNull OAuth2Request<?> request) throws OAuth2Exception {
-        // Initialize actual request.
         OAuth2RequestMethod method = request.method();
         String url = request.url().asText();
         Q actualRequest = initializeActualRequest(method, url);
-        // Add headers to actual request.
         OAuth2Headers headers = request.headers();
         if (headers != null) { headers.forEach((name, value) -> addHeader(actualRequest, name, value)); }
-        // Set entity to actual request.
         AbstractOAuth2RequestEntity entity = request.entity();
         if (entity != null) { setContentTypeAndEntity(actualRequest, entity); }
-        // Do execute actual request.
         try {
             log.debug("Ready to execute request. request: {}", request);
             AbstractOAuth2Response response = executeActualRequest(actualRequest);
@@ -74,12 +71,17 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
         }
     }
 
-    // #########################################################################################
-    // #################### protected abstract method ##########################################
-    // #########################################################################################
+    // ##################################################################################
+    // #################### request related operation ###################################
+    // ##################################################################################
 
     /**
      * Initialize an actual request.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The {@code url} is {@link OAuth2URL#asText()}.</li>
+     * </ul>
      *
      * @param method method
      * @param url url
@@ -88,16 +90,16 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
     protected abstract @NotNull Q initializeActualRequest(@NotNull OAuth2RequestMethod method, @NotNull String url);
 
     /**
-     * Add the given {@code headers} to the {@code actualRequest}.
+     * Add an oauth2 request header.
      *
      * @param actualRequest actual request
-     * @param name header name
-     * @param value header value
+     * @param name oauth2 header name
+     * @param value oauth2 header value
      */
     protected abstract void addHeader(@NotNull Q actualRequest, @NotNull String name, @NotNull String value);
 
     /**
-     * Set content type and entity to actual request.
+     * Set {@link AbstractOAuth2RequestEntity#contentType() contentType} and {@code entity} to actual request.
      *
      * @param actualRequest actual request
      * @param entity entity
@@ -108,8 +110,8 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
      * Execute the given {@code actualRequest}.
      *
      * @param actualRequest actual request
-     * @return response
-     * @throws IOException if I/O error occurs
+     * @return oauth2 response
+     * @throws IOException if an I/O error occurs
      */
     protected abstract @NotNull AbstractOAuth2Response executeActualRequest(@NotNull Q actualRequest) throws IOException;
 

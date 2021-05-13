@@ -39,10 +39,10 @@ public final class OAuth2RequestExecutorFactoryManager {
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
 
-    // ######################################################################################
+    // ##################################################################################
 
     /** Factory group by identifier. */
-    private static final @NotNull Map<@NotNull String, @NotNull OAuth2RequestExecutorFactory<?>> factoryGroupByIdentifier = new ConcurrentHashMap<>();
+    private static final @NotNull Map<@NotNull String, @NotNull OAuth2RequestExecutorFactory<?>> factories = new ConcurrentHashMap<>();
 
     // Register OAuth2RequestExecutorFactory automatically through java spi.
     static {
@@ -52,26 +52,26 @@ public final class OAuth2RequestExecutorFactoryManager {
         log.info("All factories that have implemented java spi have been automatically registered.");
     }
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     /**
      * Return any enabled factory.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If there is no enabled factory registered in {@code this} manager, an {@link IllegalStateException} will be
+     * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
      * thrown.</li>
      * </ul>
      *
      * @return factory
      */
     public static @NotNull OAuth2RequestExecutorFactory<?> any() {
-        return factoryGroupByIdentifier.values().stream()
-                .filter(OAuth2RequestExecutorFactory::isEnabled)
+        return factories.values().stream()
+                .filter(OAuth2RequestExecutorFactory::enabled)
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("There is no enabled factory in this manager."));
+                .orElseThrow(() -> new IllegalArgumentException("There is no enabled factory."));
     }
 
     /**
@@ -79,32 +79,34 @@ public final class OAuth2RequestExecutorFactoryManager {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If there is no enabled factory with the {@code identifier} registered in {@code this} manager, an {@link
-     * IllegalStateException} will be thrown.</li>
+     * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
+     * thrown.</li>
      * </ul>
      *
      * @param identifier identifier
-     * @return factory with the given {@code identifier}
+     * @return factory
      */
     public static @NotNull OAuth2RequestExecutorFactory<?> one(@NotNull String identifier) {
-        OAuth2RequestExecutorFactory<?> factory = factoryGroupByIdentifier.get(identifier);
+        OAuth2RequestExecutorFactory<?> factory = factories.get(identifier);
         if (factory == null) {
-            throw new IllegalStateException(String.format("There is no factory with the identifier %s.", identifier));
-        } else if (factory.isEnabled()) {
+            throw new IllegalArgumentException(
+                    String.format("There is no such factory. identifier: %s.", identifier)
+            );
+        } else if (factory.enabled()) {
             return factory;
         } else {
-            throw new IllegalStateException(
-                    String.format("The factory with the identifier %s is not enabled.", identifier)
+            throw new IllegalArgumentException(
+                    String.format("There is no such factory. %s is not enabled.", identifier)
             );
         }
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
-     * Register the given {@code factory} and return previous.
+     * Register the given {@code factory}.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
@@ -112,25 +114,27 @@ public final class OAuth2RequestExecutorFactoryManager {
      * replaced.</li>
      * </ul>
      *
-     * @param <Q> the type of actual request
+     * @param <Q> the actual type of request
      * @param factory oauth2 request executor factory
-     * @return previous factory with the same identifier as the {@code factory}, or {@code null} if not exists
+     * @return previous factory, or {@code null} if not exists
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <Q> @Nullable OAuth2RequestExecutorFactory<Q> register(
             @NotNull OAuth2RequestExecutorFactory<Q> factory) {
         String identifier = factory.identifier();
-        OAuth2RequestExecutorFactory previous = factoryGroupByIdentifier.put(identifier, factory);
+        OAuth2RequestExecutorFactory previous = factories.put(identifier, factory);
         if (previous == null) {
-            log.info("The factory with identifier {} has been registered.", identifier);
+            log.info("A factory has been registered successfully. identifier: {}", identifier);
         } else {
             log.warn(
-                    "{} and {} have the same identifier {}, and the previous has been replaced.",
-                    previous, factory, identifier
+                    "A factory replaced the previous when being registered. identifier: {}, current: {}, previous: {}",
+                    identifier, factory, previous
             );
         }
         return previous;
     }
+
+    // ##################################################################################
 
     /** Static Manager. */
     private OAuth2RequestExecutorFactoryManager() {}

@@ -42,7 +42,7 @@ public class OAuth2RequestExecutorBasedOnApacheHttpclientTest {
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorBasedOnApacheHttpclientTest.class);
 
-    // ######################################################################################
+    // ##################################################################################
 
     @Test
     public void testExecute() throws Exception {

@@ -31,24 +31,24 @@ import java.util.Map;
  */
 public final class OAuth2URLQuery {
 
-    /** Estimated number of unit names. */
-    private final int estimatedNumberOfUnitNames;
-    /** Raw oauth2 url query. */
+    /** Estimated number of parameter names. */
+    private final int estimatedNumberOfParameterNames;
+    /** Raw parameters. */
     private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> raw;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     /**
      * Return query in text format.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If {@code this} query has no unit, an empty string will be returned, otherwise the text like {@code
-     * "?key1=urlEncodedValue1&key2=urlEncodedValue2"} will be returned.</li>
-     * <li>If a unit has more than one values, the text like {@code "?key=urlEncodedValue1&key=urlEncodedValue2"} will
-     * be returned.</li>
+     * <li>If {@code this} query has no parameter, an empty string {@code ""} will be returned, otherwise the text like
+     * {@code "?key1=urlEncodedValue1&key2=urlEncodedValue2"} will be returned.</li>
+     * <li>If there are more than one value associated with a parameter name, the text like {@code
+     * "?key=urlEncodedValue1&key=urlEncodedValue2"} will be returned.</li>
      * </ul>
      *
      * @return query in text format
@@ -89,22 +89,22 @@ public final class OAuth2URLQuery {
         return new OAuth2URLQuery(this);
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
-     * Add a unit which the name is unique.
+     * Add a parameter which the name is unique.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The unit will appear only once in {@link #toString()}.</li>
-     * <li>If the {@code value} is {@code null}, the unit in {@link #toString()} is like {@code "key1&key2"}.</li>
+     * <li>The parameter will only appear once in the {@link #asText()}.</li>
+     * <li>If the {@code value} is {@code null}, the parameter in {@link #asText()} is like {@code "key1&key2"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name unit name
-     * @param value unit value
+     * @param name parameter name
+     * @param value parameter value
      * @return self reference
      */
     public @NotNull OAuth2URLQuery unique(@NotNull String name, @Nullable String value) {
@@ -113,18 +113,18 @@ public final class OAuth2URLQuery {
     }
 
     /**
-     * Add a unit which the name is repeatable.
+     * Add a parameter which the name is repeatable.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the unit is added more than once, the unit will appear several times in {@link #toString()}. And it is
-     * like {@code "key=value1&key=value2"}</li>
-     * <li>If the {@code value} is {@code null}, the unit in {@link #toString()} is like {@code "key1&key2"}.</li>
+     * <li>If the parameter of the {@code name} is added more than once, the parameter will also appear in the {@link
+     * #asText()} for the corresponding number of times. And the text is like {@code "key=value1&key=value2"}.</li>
+     * <li>If the {@code value} is {@code null}, the parameter in {@link #asText()} is like {@code "key1&key2"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name unit name
-     * @param value unit value
+     * @param name parameter name
+     * @param value parameter value
      * @return self reference
      */
     @SuppressWarnings("unchecked")
@@ -145,15 +145,15 @@ public final class OAuth2URLQuery {
     }
 
     /**
-     * Add units which the name is repeatable.
+     * Add parameters which the name is repeatable.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code values} is {@code null}, the operation will be ignored.</li>
      * </ul>
      *
-     * @param name unit name
-     * @param values unit value
+     * @param name parameter name
+     * @param values parameter values
      * @return self reference
      * @see #repeatable(String, String)
      */
@@ -165,18 +165,18 @@ public final class OAuth2URLQuery {
         return this;
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
      *
-     * @param estimatedNumberOfUnitNames estimated number of unit names
+     * @param estimatedNumberOfParameterNames estimated number of parameter names
      */
-    public OAuth2URLQuery(int estimatedNumberOfUnitNames) {
-        this.estimatedNumberOfUnitNames = estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfUnitNames, 1F);
+    public OAuth2URLQuery(int estimatedNumberOfParameterNames) {
+        this.estimatedNumberOfParameterNames = estimatedNumberOfParameterNames;
+        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
     }
 
     /**
@@ -187,20 +187,18 @@ public final class OAuth2URLQuery {
      */
     @SuppressWarnings("unchecked")
     protected OAuth2URLQuery(@NotNull OAuth2URLQuery template) {
-        this.estimatedNumberOfUnitNames = template.estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfUnitNames, 1F);
+        this.estimatedNumberOfParameterNames = template.estimatedNumberOfParameterNames;
+        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
         for (Map.Entry<String, Object> entry : template.raw.entrySet()) {
-            if (entry instanceof List) {
-                this.raw.put(entry.getKey(), new LinkedList<>((List<String>) entry.getValue()));
-            } else {
-                this.raw.put(entry.getKey(), entry.getValue());
-            }
+            Object value = entry.getValue();
+            if (value instanceof List) { value = new LinkedList<>((List<String>) value); }
+            this.raw.put(entry.getKey(), value);
         }
     }
 
-    // ######################################################################################
-    // #################### stringifier #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
 
     @Override
     public @NotNull String toString() {

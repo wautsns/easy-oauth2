@@ -15,6 +15,10 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin;
 
+import com.github.wautsns.easy.oauth2.core.assembly.configuration.OAuth2PlatformSupplier;
+import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
+
 /**
  * Builtin oauth2 platform.
  *
@@ -27,28 +31,33 @@ public enum BuiltinOAuth2Platform {
     GITHUB("github"),
     ;
 
-    /** Identifier. */
+    /** Identifier, for more details see {@link OAuth2PlatformSupplier#platform()}. */
     private final String identifier;
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
+
+    /**
+     * Return identifier.
+     *
+     * @return identifier, for more details see {@link OAuth2PlatformSupplier#platform()}
+     */
+    public @NotNull String identifier() {
+        return identifier;
+    }
+
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
      *
      * @param identifier identifier
      */
-    BuiltinOAuth2Platform(String identifier) {
-        this.identifier = identifier;
-    }
-
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
-
-    public String getIdentifier() {
-        return identifier;
+    BuiltinOAuth2Platform(@NotNull String identifier) {
+        this.identifier = Objects.requireNonNull(identifier);
     }
 
 }

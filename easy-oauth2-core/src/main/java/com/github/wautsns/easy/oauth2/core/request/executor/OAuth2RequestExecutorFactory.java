@@ -27,12 +27,27 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface OAuth2RequestExecutorFactory<Q> {
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
+
+    /**
+     * Return whether {@code this} factory is enabled.
+     *
+     * @return {@code true} if {@code this} factory is enabled, otherwise {@code false}
+     * @implNote The default implementation always returns {@code true}.
+     */
+    default boolean enabled() {
+        return true;
+    }
 
     /**
      * Return identifier of {@code this} factory.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The default implementation is {@code getClass().getCanonicalName()}.</li>
+     * </ul>
      *
      * @return identifier of {@code this} factory
      */
@@ -40,18 +55,30 @@ public interface OAuth2RequestExecutorFactory<Q> {
         return getClass().getCanonicalName();
     }
 
-    /**
-     * Return whether {@code this} factory is enabled.
-     *
-     * @return {@code true} if {@code this} factory is enabled, otherwise {@code false}
-     */
-    boolean isEnabled();
+    // ##################################################################################
+    // #################### create ######################################################
+    // ##################################################################################
 
     /**
-     * Create an oauth2 request executor.
+     * Create a default request executor.
      *
-     * @param properties oauth2 request executor properties
-     * @return oauth2 request executor
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The request executor is created with {@link OAuth2RequestExecutorProperties#DEFAULT}.</li>
+     * </ul>
+     *
+     * @return request executor
+     * @implNote Under normal circumstances, the method should not be overridden.
+     */
+    default @NotNull AbstractOAuth2RequestExecutor<Q> create() {
+        return create(OAuth2RequestExecutorProperties.DEFAULT);
+    }
+
+    /**
+     * Create a request executor.
+     *
+     * @param properties request executor properties
+     * @return request executor
      */
     @NotNull AbstractOAuth2RequestExecutor<Q> create(@NotNull OAuth2RequestExecutorProperties properties);
 

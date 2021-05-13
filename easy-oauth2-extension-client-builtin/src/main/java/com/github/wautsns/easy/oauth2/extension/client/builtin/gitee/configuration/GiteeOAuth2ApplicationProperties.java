@@ -15,7 +15,7 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration;
 
-import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
+import com.github.wautsns.easy.oauth2.core.assembly.configuration.AbstractOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
@@ -36,32 +36,30 @@ public final class GiteeOAuth2ApplicationProperties extends AbstractOAuth2Applic
     /** Your application’s callback urls (gitee allows multiple callbacks, but only the last one is active). */
     private List<String> callbacks;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     @Override
-    public @NotNull String platformIdentifier() {
-        return BuiltinOAuth2Platform.GITEE.getIdentifier();
+    public @NotNull String platform() {
+        return BuiltinOAuth2Platform.GITEE.identifier();
     }
 
-    // ######################################################################################
-    // #################### validate ########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### validate ####################################################
+    // ##################################################################################
 
     @Override
     public void validate() {
-        Objects.requireNonNull(clientId, "Client id cannot be null.");
-        Objects.requireNonNull(clientSecret, "Client secret cannot be null.");
-        Objects.requireNonNull(callbacks, "Callbacks cannot be null.");
-        if (callbacks.stream().anyMatch(Objects::isNull)) {
-            throw new IllegalArgumentException("Callbacks cannot contain null.");
-        }
+        Objects.requireNonNull(clientId);
+        Objects.requireNonNull(clientSecret);
+        Objects.requireNonNull(callbacks);
+        callbacks.forEach(Objects::requireNonNull);
     }
 
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### getter / setter #############################################
+    // ##################################################################################
 
     public String getClientId() {
         return clientId;

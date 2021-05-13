@@ -15,7 +15,7 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration;
 
-import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
+import com.github.wautsns.easy.oauth2.core.assembly.configuration.AbstractOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
@@ -36,31 +36,31 @@ public final class GitHubOAuth2ApplicationProperties extends AbstractOAuth2Appli
      * Your application’s callback url. Read our <a href="https://docs.github.com/v3/oauth/">OAuth documentation</a> for
      * more information.
      */
-    private String authorizeCallbackURL;
+    private String authorizeCallback;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     @Override
-    public @NotNull String platformIdentifier() {
-        return BuiltinOAuth2Platform.GITHUB.getIdentifier();
+    public @NotNull String platform() {
+        return BuiltinOAuth2Platform.GITHUB.identifier();
     }
 
-    // ######################################################################################
-    // #################### validate ########################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### validate ####################################################
+    // ##################################################################################
 
     @Override
     public void validate() {
-        Objects.requireNonNull(clientId, "Client id cannot be null");
-        Objects.requireNonNull(clientSecret, "Client secret cannot be null");
-        Objects.requireNonNull(authorizeCallbackURL, "Authorize callback url cannot be null");
+        Objects.requireNonNull(clientId);
+        Objects.requireNonNull(clientSecret);
+        Objects.requireNonNull(authorizeCallback);
     }
 
-    // ######################################################################################
-    // #################### getter / setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### getter / setter #############################################
+    // ##################################################################################
 
     public String getClientId() {
         return clientId;
@@ -80,12 +80,12 @@ public final class GitHubOAuth2ApplicationProperties extends AbstractOAuth2Appli
         return this;
     }
 
-    public String getAuthorizeCallbackURL() {
-        return authorizeCallbackURL;
+    public String getAuthorizeCallback() {
+        return authorizeCallback;
     }
 
-    public GitHubOAuth2ApplicationProperties setAuthorizeCallbackURL(String authorizeCallbackURL) {
-        this.authorizeCallbackURL = authorizeCallbackURL;
+    public GitHubOAuth2ApplicationProperties setAuthorizeCallback(String authorizeCallback) {
+        this.authorizeCallback = authorizeCallback;
         return this;
     }
 

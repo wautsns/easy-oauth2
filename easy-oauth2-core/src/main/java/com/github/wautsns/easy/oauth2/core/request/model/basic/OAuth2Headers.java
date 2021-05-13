@@ -24,31 +24,32 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
- * OAuth2 request headers.
+ * OAuth2 headers.
  *
  * @author wautsns
  * @since Mar 29, 2021
  */
 public final class OAuth2Headers {
 
-    /** Estimated number of unit names. */
-    private final int estimatedNumberOfUnitNames;
-    /** Raw oauth2 headers. */
+    /** Estimated number of header names. */
+    private final int estimatedNumberOfNames;
+    /** Raw headers. */
     private final @NotNull LinkedHashMap<@NotNull String, @NotNull Object> raw;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     /**
-     * For each header name and header value.
+     * For each header name and value.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If a header is repeatable, all values will be processed separately.</li>
+     * <li>The order of traversal is the same as the order in which the headers are added.</li>
      * </ul>
      *
-     * @param action action for header name and header value
+     * @param action action for header name and value
      */
     @SuppressWarnings("unchecked")
     public void forEach(@NotNull BiConsumer<@NotNull String, @NotNull String> action) {
@@ -74,16 +75,16 @@ public final class OAuth2Headers {
         return new OAuth2Headers(this);
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
      * Add a header which the name is unique.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code value} is {@code null}, the header will be removed.</li>
+     * <li>If the {@code value} is {@code null}, try to remove the header for the {@code name}.</li>
      * </ul>
      *
      * @param name header name
@@ -128,12 +129,38 @@ public final class OAuth2Headers {
         return this;
     }
 
-    // ######################################################################################
+    /**
+     * Add headers which the name is repeatable.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If the {@code values} is {@code null}, the operation will be ignored.</li>
+     * </ul>
+     *
+     * @param name header name
+     * @param values header values
+     * @return self reference
+     * @see #repeatable(String, String)
+     */
+    public @NotNull OAuth2Headers repeatable(@NotNull String name, @Nullable Iterable<String> values) {
+        if (values == null) { return this; }
+        for (String value : values) {
+            repeatable(name, value);
+        }
+        return this;
+    }
+
+    // ##################################################################################
 
     /**
-     * Add header `Accept` through {@link #unique(String, String)}.
+     * Add header `Accept`.
      *
-     * @param value value
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The method equals to {@link #unique(String, String) unique("Accept", value)}.</li>
+     * </ul>
+     *
+     * @param value header value
      * @return self reference
      */
     public @NotNull OAuth2Headers accept(@NotNull String value) {
@@ -141,7 +168,12 @@ public final class OAuth2Headers {
     }
 
     /**
-     * Add header `Accept` with value {@code "application/json"} through {@link #accept(String)}.
+     * Add header `Accept` with value {@code "application/json"}.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The method equals to {@link #accept(String) accept("application/json")}.</li>
+     * </ul>
      *
      * @return self reference
      */
@@ -149,10 +181,16 @@ public final class OAuth2Headers {
         return accept("application/json");
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
-     * Add header `Authorization` through {@link #unique(String, String)}.
+     * Add header `Authorization`.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If the {@code value} is not {@code null}, the method equals to {@link #unique(String, String)
+     * unique("Authorization", type + ' ' + value)}, otherwise, the operation will be ignored.</li>
+     * </ul>
      *
      * @param value value
      * @return self reference
@@ -162,10 +200,15 @@ public final class OAuth2Headers {
         return this;
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
-     * Add header `Content-Type` through {@link #unique(String, String)}.
+     * Add header `Content-Type`.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The method equals to {@link #unique(String, String) unique("Content-Type", value)}.</li>
+     * </ul>
      *
      * @param value value
      * @return self reference
@@ -174,29 +217,36 @@ public final class OAuth2Headers {
         return unique("Content-Type", value);
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
-     * Add header `User-Agent` with value {@code "EasyOAuth2"} through {@link #unique(String, String)}.
+     * Add header `User-Agent` with value {@code "Mozilla/5.0 (X11; Linux x86_64) JavaBasedWebKit/98.6.27
+     * EasyOAuth2/98.2.5"}.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The method equals to {@link #unique(String, String)
+     * unique("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) JavaBasedWebKit/98.6.27 EasyOAuth2/98.2.5")}.</li>
+     * </ul>
      *
      * @return self reference
      */
     public @NotNull OAuth2Headers userAgentEasyOAuth2() {
-        return unique("User-Agent", "EasyOAuth2");
+        return unique("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) JavaBasedWebKit/98.6.27 EasyOAuth2/98.2.5");
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
      *
-     * @param estimatedNumberOfUnitNames estimated number of unit names
+     * @param estimatedNumberOfNames estimated number of header names
      */
-    public OAuth2Headers(int estimatedNumberOfUnitNames) {
-        this.estimatedNumberOfUnitNames = estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfUnitNames, 1F);
+    public OAuth2Headers(int estimatedNumberOfNames) {
+        this.estimatedNumberOfNames = estimatedNumberOfNames;
+        this.raw = new LinkedHashMap<>(this.estimatedNumberOfNames, 1F);
     }
 
     /**
@@ -207,20 +257,18 @@ public final class OAuth2Headers {
      */
     @SuppressWarnings("unchecked")
     protected OAuth2Headers(@NotNull OAuth2Headers template) {
-        this.estimatedNumberOfUnitNames = template.estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfUnitNames, 1F);
+        this.estimatedNumberOfNames = template.estimatedNumberOfNames;
+        this.raw = new LinkedHashMap<>(this.estimatedNumberOfNames, 1F);
         for (Map.Entry<String, Object> entry : template.raw.entrySet()) {
-            if (entry instanceof List) {
-                this.raw.put(entry.getKey(), new LinkedList<>((List<String>) entry.getValue()));
-            } else {
-                this.raw.put(entry.getKey(), entry.getValue());
-            }
+            Object value = entry.getValue();
+            if (value instanceof List) { value = new LinkedList<>((List<String>) value); }
+            this.raw.put(entry.getKey(), value);
         }
     }
 
-    // ######################################################################################
-    // #################### stringifier #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
 
     @Override
     public @NotNull String toString() {

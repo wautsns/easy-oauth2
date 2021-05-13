@@ -33,14 +33,14 @@ import java.util.Map;
  */
 public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2RequestEntity {
 
-    /** Estimated number of unit names. */
-    private final int estimatedNumberOfUnitNames;
-    /** Raw oauth2 request url encoded form entity. */
+    /** Estimated number of parameter names. */
+    private final int estimatedNumberOfParameterNames;
+    /** Raw url encoded form. */
     private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> raw;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     @Override
     public @NotNull String contentType() {
@@ -79,22 +79,22 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
         return new OAuth2RequestURLEncodedFormEntity(this);
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
-     * Add a unit which the name is unique.
+     * Add a parameter which the name is unique.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The unit will appear only once in {@link #toString()}.</li>
-     * <li>If the {@code value} is {@code null}, the unit in form text is like {@code "key1&key2"}.</li>
+     * <li>The parameter will only appear once in the text.</li>
+     * <li>If the {@code value} is {@code null}, the parameter in text is like {@code "key1&key2"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name unit name
-     * @param value unit value
+     * @param name parameter name
+     * @param value parameter value
      * @return self reference
      */
     public @NotNull OAuth2RequestURLEncodedFormEntity unique(@NotNull String name, @Nullable String value) {
@@ -103,18 +103,18 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
     }
 
     /**
-     * Add a unit which the name is repeatable.
+     * Add a parameter which the name is repeatable.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the unit is added more than once, the unit will appear several times in {@link #toString()}. And it is
-     * like {@code "key=value1&key=value2"}</li>
-     * <li>If the {@code value} is {@code null}, the unit in form text is like {@code "key1&key2"}.</li>
+     * <li>If the parameter of the {@code name} is added more than once, the parameter will also appear in the text for
+     * the corresponding number of times. And the text is like {@code "key=value1&key=value2"}.</li>
+     * <li>If the {@code value} is {@code null}, the parameter in text is like {@code "key1&key2"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name unit name
-     * @param value unit value
+     * @param name parameter name
+     * @param value parameter value
      * @return self reference
      */
     @SuppressWarnings("unchecked")
@@ -134,35 +134,56 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
         return this;
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    /**
+     * Add parameters which the name is repeatable.
+     *
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If the {@code values} is {@code null}, the operation will be ignored.</li>
+     * </ul>
+     *
+     * @param name parameter name
+     * @param values parameter values
+     * @return self reference
+     * @see #repeatable(String, String)
+     */
+    public @NotNull OAuth2RequestURLEncodedFormEntity repeatable(
+            @NotNull String name, @Nullable Iterable<String> values) {
+        if (values == null) { return this; }
+        for (String value : values) {
+            repeatable(name, value);
+        }
+        return this;
+    }
+
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
      *
-     * @param estimatedNumberOfUnitNames estimated number of unit names
+     * @param estimatedNumberOfParameterNames estimated number of parameter names
      */
-    public OAuth2RequestURLEncodedFormEntity(int estimatedNumberOfUnitNames) {
-        this.estimatedNumberOfUnitNames = estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(estimatedNumberOfUnitNames, 1F);
+    public OAuth2RequestURLEncodedFormEntity(int estimatedNumberOfParameterNames) {
+        this.estimatedNumberOfParameterNames = estimatedNumberOfParameterNames;
+        this.raw = new LinkedHashMap<>(estimatedNumberOfParameterNames, 1F);
     }
 
     /**
-     * Construct an instance.
+     * Construct an instance by deep copying {@code template}.
      *
      * @param template template
+     * @see #copy()
      */
     @SuppressWarnings("unchecked")
     protected OAuth2RequestURLEncodedFormEntity(@NotNull OAuth2RequestURLEncodedFormEntity template) {
-        this.estimatedNumberOfUnitNames = template.estimatedNumberOfUnitNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfUnitNames, 1F);
+        this.estimatedNumberOfParameterNames = template.estimatedNumberOfParameterNames;
+        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
         for (Map.Entry<String, Object> entry : template.raw.entrySet()) {
-            if (entry instanceof List) {
-                this.raw.put(entry.getKey(), new LinkedList<>((List<String>) entry.getValue()));
-            } else {
-                this.raw.put(entry.getKey(), entry.getValue());
-            }
+            Object value = entry.getValue();
+            if (value instanceof List) { value = new LinkedList<>((List<String>) value); }
+            this.raw.put(entry.getKey(), value);
         }
     }
 

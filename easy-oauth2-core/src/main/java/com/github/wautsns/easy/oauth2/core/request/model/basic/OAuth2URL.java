@@ -35,9 +35,9 @@ public final class OAuth2URL {
     /** URL encoded anchor. */
     private @Nullable String anchor;
 
-    // ######################################################################################
-    // #################### enhanced getter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced getter #############################################
+    // ##################################################################################
 
     /**
      * Return url without query and anchor.
@@ -58,20 +58,26 @@ public final class OAuth2URL {
     }
 
     /**
-     * Return url encoded anchor.
+     * Return anchor.
      *
-     * @return url encoded anchor, or {@code null} if the anchor does not assign
+     * <ul>
+     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>The anchor has been url encoded.</li>
+     * </ul>
+     *
+     * @return anchor, or {@code null} if the anchor does not assign
      */
     public @Nullable String anchor() {
         return anchor;
     }
 
-    // ######################################################################################
+    // ##################################################################################
 
     /**
      * Return url in text format.
      *
      * @return url in text format
+     * @see OAuth2URLQuery#asText()
      */
     public @NotNull String asText() {
         StringBuilder url = new StringBuilder();
@@ -90,16 +96,16 @@ public final class OAuth2URL {
         return new OAuth2URL(this);
     }
 
-    // ######################################################################################
-    // #################### enhanced setter #################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### enhanced setter #############################################
+    // ##################################################################################
 
     /**
      * Assign anchor.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code anchor} is {@code null}, the anchor will not appear in {@link #toString()}</li>
+     * <li>If the {@code anchor} is {@code null}, the anchor will not appear in {@link #asText()}</li>
      * <li>The {@code anchor} will be automatically url encoded.</li>
      * </ul>
      *
@@ -111,19 +117,19 @@ public final class OAuth2URL {
         return this;
     }
 
-    // ######################################################################################
-    // #################### constructor #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### constructor #################################################
+    // ##################################################################################
 
     /**
      * Construct an instance.
      *
      * @param urlWithoutQueryAndAnchor url without query and anchor
-     * @param estimatedNumberOfQueryUnitNames estimated number of query unit names
+     * @param estimatedNumberOfQueryParameterNames estimated number of query parameter names
      */
-    public OAuth2URL(@NotNull String urlWithoutQueryAndAnchor, int estimatedNumberOfQueryUnitNames) {
+    public OAuth2URL(@NotNull String urlWithoutQueryAndAnchor, int estimatedNumberOfQueryParameterNames) {
         this.urlWithoutQueryAndAnchor = Objects.requireNonNull(urlWithoutQueryAndAnchor);
-        this.query = new OAuth2URLQuery(estimatedNumberOfQueryUnitNames);
+        this.query = new OAuth2URLQuery(estimatedNumberOfQueryParameterNames);
     }
 
     /**
@@ -138,9 +144,9 @@ public final class OAuth2URL {
         this.anchor = template.anchor;
     }
 
-    // ######################################################################################
-    // #################### stringifier #####################################################
-    // ######################################################################################
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
 
     @Override
     public @NotNull String toString() {
