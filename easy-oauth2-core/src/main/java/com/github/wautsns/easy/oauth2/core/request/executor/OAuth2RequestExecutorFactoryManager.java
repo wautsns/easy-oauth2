@@ -79,6 +79,7 @@ public final class OAuth2RequestExecutorFactoryManager {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li>If the {@code identifier} is {@code null}, the method equals to {@link #any()}.</li>
      * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
      * thrown.</li>
      * </ul>
@@ -86,7 +87,8 @@ public final class OAuth2RequestExecutorFactoryManager {
      * @param identifier identifier
      * @return factory
      */
-    public static @NotNull OAuth2RequestExecutorFactory<?> one(@NotNull String identifier) {
+    public static @NotNull OAuth2RequestExecutorFactory<?> one(@Nullable String identifier) {
+        if (identifier == null) { return any(); }
         OAuth2RequestExecutorFactory<?> factory = factories.get(identifier);
         if (factory == null) {
             throw new IllegalArgumentException(
