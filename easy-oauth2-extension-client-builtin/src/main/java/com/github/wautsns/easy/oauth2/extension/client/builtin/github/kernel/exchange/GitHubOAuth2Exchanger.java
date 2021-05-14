@@ -16,13 +16,13 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.AbstractTokenAvailableOAuth2Exchanger;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.configuration.OAuth2ExchangerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUser;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUserIdentifier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeTokenForUser;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeTokenForUserIdentifier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenAvailableOAuth2Exchanger;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUser;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUserIdentifier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeTokenForUser;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeTokenForUserIdentifier;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.exception.specific.OAuth2AccessTokenExpiredException;
 import com.github.wautsns.easy.oauth2.core.exception.specific.OAuth2UserDeniedAuthorizationException;
@@ -31,7 +31,6 @@ import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2Request;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2RequestMethod;
 import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2Response;
-import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model.GitHubOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model.GitHubOAuth2User;
@@ -81,7 +80,7 @@ public final class GitHubOAuth2Exchanger extends AbstractTokenAvailableOAuth2Exc
                 OAuth2Request<?> request = template.copy(false, true, true);
                 request.url().query().unique("code", code);
                 AbstractOAuth2Response response = metadata.requestExecutor().execute(request);
-                JsonNode root = OAuth2DataUtils.readJSONInputStreamAsTree(response.bodyInputStream());
+                JsonNode root = response.readJSONBodyInputStreamAsTree();
                 String error = root.path("error").asText(null);
                 if (error == null) {
                     return new GitHubOAuth2Token(root);
@@ -116,7 +115,7 @@ public final class GitHubOAuth2Exchanger extends AbstractTokenAvailableOAuth2Exc
             OAuth2Request<?> request = template.copy(true, false, true);
             request.headers(new OAuth2Headers(1).authorization("token", token.accessToken()));
             AbstractOAuth2Response response = metadata.requestExecutor().execute(request);
-            JsonNode root = OAuth2DataUtils.readJSONInputStreamAsTree(response.bodyInputStream());
+            JsonNode root = response.readJSONBodyInputStreamAsTree();
             if (response.status() < 300) {
                 return new GitHubOAuth2User(root);
             } else {

@@ -16,7 +16,7 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.token.AbstractRefreshableOAuth2Token;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractRefreshableOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;

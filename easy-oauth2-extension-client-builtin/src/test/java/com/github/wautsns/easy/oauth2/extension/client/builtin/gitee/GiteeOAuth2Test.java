@@ -15,14 +15,12 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee;
 
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.AbstractOAuth2Test;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2Permission;
-import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.authorize.GiteeOAuth2AuthorizeURLInitializer;
-import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.GiteeOAuth2Exchanger;
 import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
@@ -33,17 +31,17 @@ import java.util.Arrays;
  * @since May 04, 2021
  */
 @SuppressWarnings("all")
-public class GiteeOAuth2Test extends AbstractOAuth2Test<GiteeOAuth2ApplicationProperties, GiteeOAuth2AuthorizationProperties, GiteeOAuth2AuthorizeURLInitializer, GiteeOAuth2Exchanger> {
+public class GiteeOAuth2Test extends AbstractOAuth2Test {
 
     @Override
     protected @NotNull String authorizeCode() {
-        return "f1ed7d4e4c78d0b2dc01";
+        return "803afa86129a567137bc1399eafc9351a12fd8df0538a3ea3465125913e1d075";
     }
 
     // ##################################################################################
 
     @Override
-    protected @NotNull GiteeOAuth2ApplicationProperties initializeApplicationProperties(
+    protected @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
             @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback) {
         return new GiteeOAuth2ApplicationProperties()
                 .setClientId(clientId)
@@ -52,24 +50,12 @@ public class GiteeOAuth2Test extends AbstractOAuth2Test<GiteeOAuth2ApplicationPr
     }
 
     @Override
-    protected @NotNull GiteeOAuth2AuthorizationProperties initializeAuthorizationProperties() {
+    protected @NotNull AbstractOAuth2AuthorizationProperties initializeAuthorizationProperties() {
         return new GiteeOAuth2AuthorizationProperties()
                 .setPermissions(Arrays.asList(
                         GiteeOAuth2Permission.USER_INFO,
                         GiteeOAuth2Permission.EMAILS
                 ));
-    }
-
-    @Override
-    protected @NotNull GiteeOAuth2AuthorizeURLInitializer initializeAuthorizeURLInitializer(
-            @NotNull OAuth2AuthorizeURLInitializerMetadata<GiteeOAuth2ApplicationProperties, GiteeOAuth2AuthorizationProperties> metadata) {
-        return new GiteeOAuth2AuthorizeURLInitializer(metadata);
-    }
-
-    @Override
-    protected @NotNull GiteeOAuth2Exchanger initializeExchanger(
-            @NotNull OAuth2ExchangerMetadata<GiteeOAuth2ApplicationProperties> metadata) {
-        return new GiteeOAuth2Exchanger(metadata);
     }
 
 }

@@ -90,11 +90,11 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
     protected abstract @NotNull Q initializeActualRequest(@NotNull OAuth2RequestMethod method, @NotNull String url);
 
     /**
-     * Add an oauth2 request header.
+     * Add an request header.
      *
      * @param actualRequest actual request
-     * @param name oauth2 header name
-     * @param value oauth2 header value
+     * @param name header name
+     * @param value header value
      */
     protected abstract void addHeader(@NotNull Q actualRequest, @NotNull String name, @NotNull String value);
 
@@ -110,7 +110,7 @@ public abstract class AbstractOAuth2RequestExecutor<Q> {
      * Execute the given {@code actualRequest}.
      *
      * @param actualRequest actual request
-     * @return oauth2 response
+     * @return response
      * @throws IOException if an I/O error occurs
      */
     protected abstract @NotNull AbstractOAuth2Response executeActualRequest(@NotNull Q actualRequest) throws IOException;

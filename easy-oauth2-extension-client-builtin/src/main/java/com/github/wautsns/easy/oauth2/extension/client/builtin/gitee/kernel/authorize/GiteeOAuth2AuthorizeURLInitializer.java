@@ -15,9 +15,9 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.authorize;
 
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.AbstractOAuth2AuthorizeURLInitializer;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.function.operation.OAuth2OperationInitializeAuthorizeURL;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.AbstractOAuth2AuthorizeURLInitializer;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.function.operation.OAuth2OperationInitializeAuthorizeURL;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2AuthorizationProperties;

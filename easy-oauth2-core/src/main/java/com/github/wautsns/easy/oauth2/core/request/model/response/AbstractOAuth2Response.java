@@ -109,8 +109,8 @@ public abstract class AbstractOAuth2Response {
      *
      * @return root node of the tree
      * @throws OAuth2IOException if an I/O error occurs
-     * @see OAuth2DataUtils#readJSONInputStreamAsTree(InputStream)
      * @see #bodyInputStream()
+     * @see OAuth2DataUtils#readJSONInputStreamAsTree(InputStream)
      */
     public final @NotNull JsonNode readJSONBodyInputStreamAsTree() throws OAuth2IOException {
         return OAuth2DataUtils.readJSONInputStreamAsTree(bodyInputStream());

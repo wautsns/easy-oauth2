@@ -1,0 +1,2 @@
+com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.assembly.GiteeOAuth2AssemblyFactory
+com.github.wautsns.easy.oauth2.extension.client.builtin.github.assembly.GitHubOAuth2AssemblyFactory

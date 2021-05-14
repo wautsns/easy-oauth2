@@ -16,11 +16,11 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.AbstractOAuth2User;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.property.OAuth2UserAvatarSupplier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.property.OAuth2UserEmailSupplier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.property.OAuth2UserNicknameSupplier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.property.OAuth2UserUsernameSupplier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.property.OAuth2UserAvatarSupplier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.property.OAuth2UserEmailSupplier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.property.OAuth2UserNicknameSupplier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.property.OAuth2UserUsernameSupplier;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

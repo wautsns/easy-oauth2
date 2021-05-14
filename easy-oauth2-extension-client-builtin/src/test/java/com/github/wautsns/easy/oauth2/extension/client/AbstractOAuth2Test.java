@@ -16,19 +16,20 @@
 package com.github.wautsns.easy.oauth2.extension.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.wautsns.easy.oauth2.core.assembly.OAuth2Assembly;
-import com.github.wautsns.easy.oauth2.core.assembly.configuration.AbstractOAuth2ApplicationProperties;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.AbstractOAuth2AuthorizeURLInitializer;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.AbstractOAuth2Exchanger;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.AbstractTokenAvailableOAuth2Exchanger;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.AbstractTokenRefreshableOAuth2Exchanger;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.configuration.OAuth2ExchangerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.OAuth2CallbackQuery;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.token.AbstractOAuth2Token;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.token.AbstractRefreshableOAuth2Token;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.model.user.AbstractOAuth2User;
+import com.github.wautsns.easy.oauth2.core.client.OAuth2Client;
+import com.github.wautsns.easy.oauth2.core.client.assembly.OAuth2PlatformAssemblyFactory;
+import com.github.wautsns.easy.oauth2.core.client.assembly.OAuth2PlatformAssemblyFactoryManager;
+import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractOAuth2Exchanger;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenAvailableOAuth2Exchanger;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenRefreshableOAuth2Exchanger;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.OAuth2CallbackQuery;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractOAuth2Token;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractRefreshableOAuth2Token;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.request.executor.OAuth2RequestExecutorFactoryManager;
 import com.github.wautsns.easy.oauth2.core.request.executor.configuration.OAuth2RequestExecutorProperties;
@@ -56,21 +57,18 @@ import java.util.UUID;
  * <li>-Dproxy=${proxy}</li>
  * </ul>
  *
- * @param <A> the actual type of {@link AbstractOAuth2ApplicationProperties}
- * @param <O> the actual type of {@link AbstractOAuth2AuthorizationProperties}
- * @param <I> the actual type of {@link AbstractOAuth2AuthorizeURLInitializer}
- * @param <E> the actual type of {@link AbstractOAuth2Exchanger}
  * @author wautsns
  * @since May 08, 2021
  */
 @SuppressWarnings("all")
-public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProperties, O extends AbstractOAuth2AuthorizationProperties, I extends AbstractOAuth2AuthorizeURLInitializer<A, O>, E extends AbstractOAuth2Exchanger<A, ? extends AbstractOAuth2User>> {
+public abstract class AbstractOAuth2Test {
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // ##################################################################################
 
+    /** Platform. */
     private final String platform;
 
     // ##################################################################################
@@ -78,7 +76,7 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
     @Test
     public final void testAuthorize() throws OAuth2Exception {
         String state = UUID.randomUUID().toString();
-        OAuth2URL authorizeURL = OAuth2Assembly.authorizeURL(platform, state);
+        OAuth2URL authorizeURL = OAuth2Client.authorizeURL(platform, state);
         Assert.assertNotNull(authorizeURL);
         log.info("authorize url: {}", authorizeURL.asText());
     }
@@ -89,7 +87,7 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
     public final void testExchange() throws OAuth2Exception {
         JsonNode raw = OAuth2DataUtils.createObjectNode().put("code", authorizeCode());
         OAuth2CallbackQuery query = new OAuth2CallbackQuery(raw);
-        AbstractOAuth2Exchanger<?, ?> exchanger = OAuth2Assembly.exchanger(platform);
+        AbstractOAuth2Exchanger exchanger = OAuth2Client.exchanger(platform);
         if (exchanger instanceof AbstractTokenAvailableOAuth2Exchanger) {
             testExchange(query, (AbstractTokenAvailableOAuth2Exchanger) exchanger);
         } else if (exchanger instanceof AbstractTokenRefreshableOAuth2Exchanger) {
@@ -167,20 +165,22 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
         String clientId = Objects.requireNonNull(System.getProperty("client-id"));
         String clientSecret = Objects.requireNonNull(System.getProperty("client-secret"));
         String authorizeCallback = Objects.requireNonNull(System.getProperty("authorize-callback"));
-        A applicationProperties = initializeApplicationProperties(clientId, clientSecret, authorizeCallback);
+        AbstractOAuth2ApplicationProperties applicationProperties = initializeApplicationProperties(
+                clientId, clientSecret, authorizeCallback
+        );
         this.platform = applicationProperties.platform();
-        OAuth2Assembly.register(
-                initializeAuthorizeURLInitializer(
-                        new OAuth2AuthorizeURLInitializerMetadata<>(
+        OAuth2PlatformAssemblyFactory factory = OAuth2PlatformAssemblyFactoryManager.one(platform);
+        OAuth2Client.register(
+                factory.createAuthorizeURLInitializer(
+                        new OAuth2AuthorizeURLInitializerMetadata(
                                 applicationProperties,
                                 initializeAuthorizationProperties()
                         )
                 )
         );
-        OAuth2Assembly.register(
-                (AbstractOAuth2Exchanger) initializeExchanger(
-                        new OAuth2ExchangerMetadata<>(
-                                null,
+        OAuth2Client.register(
+                factory.createExchanger(
+                        new OAuth2ExchangerMetadata(
                                 applicationProperties,
                                 OAuth2RequestExecutorFactoryManager.any().create(initializeRequestExecutorProperties())
                         )
@@ -198,7 +198,7 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
      * @param authorizeCallback authorize callback
      * @return application properties
      */
-    protected abstract @NotNull A initializeApplicationProperties(
+    protected abstract @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
             @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback);
 
     /**
@@ -206,15 +206,7 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
      *
      * @return authorization properties
      */
-    protected abstract @NotNull O initializeAuthorizationProperties();
-
-    /**
-     * Initialize authorize url initializer.
-     *
-     * @param metadata metadata
-     * @return authorize url initializer
-     */
-    protected abstract @NotNull I initializeAuthorizeURLInitializer(@NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata);
+    protected abstract @NotNull AbstractOAuth2AuthorizationProperties initializeAuthorizationProperties();
 
     /**
      * Initialize request executor properties.
@@ -237,13 +229,5 @@ public abstract class AbstractOAuth2Test<A extends AbstractOAuth2ApplicationProp
         }
         return requestExecutorProperties;
     }
-
-    /**
-     * Initialize exchanger.
-     *
-     * @param metadata metadata
-     * @return exchanger
-     */
-    protected abstract @NotNull E initializeExchanger(@NotNull OAuth2ExchangerMetadata<A> metadata);
 
 }

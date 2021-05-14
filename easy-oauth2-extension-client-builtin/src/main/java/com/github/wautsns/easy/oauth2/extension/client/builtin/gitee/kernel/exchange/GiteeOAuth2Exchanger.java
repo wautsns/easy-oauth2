@@ -16,14 +16,14 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.AbstractTokenRefreshableOAuth2Exchanger;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.configuration.OAuth2ExchangerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUser;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUserIdentifier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeTokenForUser;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIExchangeTokenForUserIdentifier;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.function.api.OAuth2APIRefreshToken;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenRefreshableOAuth2Exchanger;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUser;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForUserIdentifier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeTokenForUser;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeTokenForUserIdentifier;
+import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIRefreshToken;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.exception.specific.OAuth2AccessTokenExpiredException;
 import com.github.wautsns.easy.oauth2.core.exception.specific.OAuth2RefreshTokenExpiredException;
@@ -32,7 +32,6 @@ import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2Request;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2RequestMethod;
 import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2Response;
-import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.model.GiteeOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.model.GiteeOAuth2User;
@@ -75,7 +74,7 @@ public final class GiteeOAuth2Exchanger extends AbstractTokenRefreshableOAuth2Ex
             OAuth2Request<?> request = template.copy(false, true, true);
             request.url().query().unique("code", query.code());
             AbstractOAuth2Response response = metadata.requestExecutor().execute(request);
-            JsonNode root = OAuth2DataUtils.readJSONInputStreamAsTree(response.bodyInputStream());
+            JsonNode root = response.readJSONBodyInputStreamAsTree();
             String error = root.path("error").asText(null);
             if (error != null) {
                 throw new OAuth2Exception(root.toString());
@@ -100,7 +99,7 @@ public final class GiteeOAuth2Exchanger extends AbstractTokenRefreshableOAuth2Ex
             OAuth2Request<?> request = template.copy(false, true, true);
             request.url().query().unique("access_token", token.accessToken());
             AbstractOAuth2Response response = metadata.requestExecutor().execute(request);
-            JsonNode root = OAuth2DataUtils.readJSONInputStreamAsTree(response.bodyInputStream());
+            JsonNode root = response.readJSONBodyInputStreamAsTree();
             if (response.status() < 300) {
                 return new GiteeOAuth2User(root);
             } else {
@@ -125,7 +124,7 @@ public final class GiteeOAuth2Exchanger extends AbstractTokenRefreshableOAuth2Ex
             OAuth2Request<?> request = template.copy(false, true, true);
             request.url().query().unique("refresh_token", token.refreshToken());
             AbstractOAuth2Response response = metadata.requestExecutor().execute(request);
-            JsonNode root = OAuth2DataUtils.readJSONInputStreamAsTree(response.bodyInputStream());
+            JsonNode root = response.readJSONBodyInputStreamAsTree();
             String error = root.path("error").asText(null);
             if (error == null) {
                 return new GiteeOAuth2Token(root);

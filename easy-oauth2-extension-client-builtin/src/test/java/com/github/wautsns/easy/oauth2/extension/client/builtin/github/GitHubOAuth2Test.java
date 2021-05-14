@@ -15,14 +15,12 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github;
 
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
-import com.github.wautsns.easy.oauth2.core.assembly.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
+import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.AbstractOAuth2Test;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2Scope;
-import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.authorize.GitHubOAuth2AuthorizeURLInitializer;
-import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.GitHubOAuth2Exchanger;
 import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
@@ -33,7 +31,7 @@ import java.util.Arrays;
  * @since May 04, 2021
  */
 @SuppressWarnings("all")
-public class GitHubOAuth2Test extends AbstractOAuth2Test<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties, GitHubOAuth2AuthorizeURLInitializer, GitHubOAuth2Exchanger> {
+public class GitHubOAuth2Test extends AbstractOAuth2Test {
 
     @Override
     protected @NotNull String authorizeCode() {
@@ -43,7 +41,7 @@ public class GitHubOAuth2Test extends AbstractOAuth2Test<GitHubOAuth2Application
     // ##################################################################################
 
     @Override
-    protected @NotNull GitHubOAuth2ApplicationProperties initializeApplicationProperties(
+    protected @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
             @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback) {
         return new GitHubOAuth2ApplicationProperties()
                 .setClientId(clientId)
@@ -52,25 +50,13 @@ public class GitHubOAuth2Test extends AbstractOAuth2Test<GitHubOAuth2Application
     }
 
     @Override
-    protected @NotNull GitHubOAuth2AuthorizationProperties initializeAuthorizationProperties() {
+    protected @NotNull AbstractOAuth2AuthorizationProperties initializeAuthorizationProperties() {
         return new GitHubOAuth2AuthorizationProperties()
                 .setScopes(Arrays.asList(
                         GitHubOAuth2Scope.NOTIFICATIONS,
                         GitHubOAuth2Scope.USER_EMAIL
                 ))
                 .setAllowSignup(Boolean.TRUE);
-    }
-
-    @Override
-    protected @NotNull GitHubOAuth2AuthorizeURLInitializer initializeAuthorizeURLInitializer(
-            @NotNull OAuth2AuthorizeURLInitializerMetadata<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties> metadata) {
-        return new GitHubOAuth2AuthorizeURLInitializer(metadata);
-    }
-
-    @Override
-    protected @NotNull GitHubOAuth2Exchanger initializeExchanger(
-            @NotNull OAuth2ExchangerMetadata<GitHubOAuth2ApplicationProperties> metadata) {
-        return new GitHubOAuth2Exchanger(metadata);
     }
 
 }

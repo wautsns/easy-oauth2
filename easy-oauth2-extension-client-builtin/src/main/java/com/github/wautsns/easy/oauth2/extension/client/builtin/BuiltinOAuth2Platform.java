@@ -15,7 +15,7 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin;
 
-import com.github.wautsns.easy.oauth2.core.assembly.configuration.OAuth2PlatformSupplier;
+import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSupplier;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 

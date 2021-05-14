@@ -114,13 +114,11 @@ public final class OAuth2RequestExecutorFactoryManager {
      * replaced.</li>
      * </ul>
      *
-     * @param <Q> the actual type of request
-     * @param factory oauth2 request executor factory
+     * @param factory request executor factory
      * @return previous factory, or {@code null} if not exists
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static <Q> @Nullable OAuth2RequestExecutorFactory<Q> register(
-            @NotNull OAuth2RequestExecutorFactory<Q> factory) {
+    @SuppressWarnings("rawtypes")
+    public static @Nullable OAuth2RequestExecutorFactory<?> register(@NotNull OAuth2RequestExecutorFactory<?> factory) {
         String identifier = factory.identifier();
         OAuth2RequestExecutorFactory previous = factories.put(identifier, factory);
         if (previous == null) {
