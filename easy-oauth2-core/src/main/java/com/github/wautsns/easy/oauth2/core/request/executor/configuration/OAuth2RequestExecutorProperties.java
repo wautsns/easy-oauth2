@@ -33,7 +33,7 @@ public final class OAuth2RequestExecutorProperties {
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>connectTimeout: {@code Duration.parse("PT2S")}</li>
-     * <li>readTimeout: {@code Duration.parse("PT5S")}</li>
+     * <li>socketTimeout: {@code Duration.parse("PT5S")}</li>
      * <li>maxConcurrentRequests: {@code 64}</li>
      * <li>maxIdleTime: {@code Duration.parse("PT5M")}</li>
      * <li>keepAliveTimeout: {@code Duration.parse("PT3M")}</li>
