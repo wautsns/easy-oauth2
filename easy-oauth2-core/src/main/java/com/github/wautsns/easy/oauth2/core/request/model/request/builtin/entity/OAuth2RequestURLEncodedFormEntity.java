@@ -187,4 +187,13 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
         }
     }
 
+    // ##################################################################################
+    // #################### stringifier #################################################
+    // ##################################################################################
+
+    @Override
+    public @NotNull String toString() {
+        return raw.toString();
+    }
+
 }
