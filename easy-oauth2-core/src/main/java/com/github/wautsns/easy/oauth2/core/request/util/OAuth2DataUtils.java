@@ -40,7 +40,7 @@ import java.nio.charset.StandardCharsets;
 public final class OAuth2DataUtils {
 
     /** Object mapper. */
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final @NotNull ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // ##################################################################################
     // #################### read ########################################################

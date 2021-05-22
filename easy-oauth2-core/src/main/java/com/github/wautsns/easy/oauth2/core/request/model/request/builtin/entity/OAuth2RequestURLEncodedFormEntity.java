@@ -148,7 +148,7 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
      * @see #repeatable(String, String)
      */
     public @NotNull OAuth2RequestURLEncodedFormEntity repeatable(
-            @NotNull String name, @Nullable Iterable<String> values) {
+            @NotNull String name, @Nullable Iterable<@Nullable String> values) {
         if (values == null) { return this; }
         for (String value : values) {
             repeatable(name, value);

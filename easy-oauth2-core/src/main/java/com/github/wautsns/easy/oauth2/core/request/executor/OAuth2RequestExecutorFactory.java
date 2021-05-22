@@ -41,20 +41,6 @@ public interface OAuth2RequestExecutorFactory<Q> {
         return true;
     }
 
-    /**
-     * Return identifier of {@code this} factory.
-     *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The default implementation is {@code getClass().getCanonicalName()}.</li>
-     * </ul>
-     *
-     * @return identifier of {@code this} factory
-     */
-    default @NotNull String identifier() {
-        return getClass().getCanonicalName();
-    }
-
     // ##################################################################################
     // #################### create ######################################################
     // ##################################################################################

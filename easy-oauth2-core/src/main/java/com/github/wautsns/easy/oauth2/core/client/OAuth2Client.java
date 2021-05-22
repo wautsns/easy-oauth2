@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class OAuth2Client {
 
     /** Logger. */
-    private static final Logger log = LoggerFactory.getLogger(OAuth2Client.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(OAuth2Client.class);
 
     // ##################################################################################
 
@@ -50,12 +50,13 @@ public final class OAuth2Client {
      * Authorize url initializer group by {@link OAuth2AuthorizeURLInitializerMetadata#platform() platform} and {@link
      * OAuth2AuthorizeURLInitializerMetadata#identifier() identifier}.
      */
-    private static final Map<String, Map<String, AbstractOAuth2AuthorizeURLInitializer>> AUTHORIZE_URL_INITIALIZERS = new ConcurrentHashMap<>();
+    private static final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull AbstractOAuth2AuthorizeURLInitializer>> AUTHORIZE_URL_INITIALIZERS =
+            new ConcurrentHashMap<>();
     /**
      * Exchanger group by {@link OAuth2ExchangerMetadata#platform() platform} and {@link
      * OAuth2ExchangerMetadata#identifier() identifier}.
      */
-    private static final Map<String, Map<String, AbstractOAuth2Exchanger>> EXCHANGERS = new ConcurrentHashMap<>();
+    private static final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull AbstractOAuth2Exchanger>> EXCHANGERS = new ConcurrentHashMap<>();
 
     // ##################################################################################
     // #################### enhanced getter #############################################
@@ -84,7 +85,7 @@ public final class OAuth2Client {
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code platform}.</li>
-     * <li>If there is no such authorize url initializer, an {@link IllegalArgumentException} will be thrown.</li>
+     * <li>If there is no such authorize url initializer, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
      * @param platform platform
@@ -98,7 +99,7 @@ public final class OAuth2Client {
         Map<String, AbstractOAuth2AuthorizeURLInitializer> initializerGroupByIdentifier =
                 AUTHORIZE_URL_INITIALIZERS.get(platform);
         if (initializerGroupByIdentifier == null) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     String.format("There is no such authorize url initializer. platform: %s", platform)
             );
         }
@@ -107,7 +108,7 @@ public final class OAuth2Client {
         if (initializer != null) {
             return initializer.initializeAuthorizeURL(state);
         } else {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     String.format(
                             "There is no such authorize url initializer. platform: %s, identifier: %s",
                             platform, identifier
@@ -139,7 +140,7 @@ public final class OAuth2Client {
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code platform}.</li>
-     * <li>If there is no such exchanger, an {@link IllegalArgumentException} will be thrown.</li>
+     * <li>If there is no such exchanger, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
      * @param platform platform
@@ -150,14 +151,14 @@ public final class OAuth2Client {
             @NotNull String platform, @Nullable String identifier) {
         Map<String, AbstractOAuth2Exchanger> exchangerGroupByIdentifier = EXCHANGERS.get(platform);
         if (exchangerGroupByIdentifier == null) {
-            throw new IllegalArgumentException(String.format("There is no such exchanger. platform: %s", platform));
+            throw new IllegalStateException(String.format("There is no such exchanger. platform: %s", platform));
         }
         identifier = (identifier == null) ? platform : identifier;
         AbstractOAuth2Exchanger exchanger = exchangerGroupByIdentifier.get(identifier);
         if (exchanger != null) {
             return exchanger;
         } else {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     String.format("There is no such exchanger. platform: %s, identifier: %s", platform, identifier)
             );
         }
@@ -190,9 +191,9 @@ public final class OAuth2Client {
             );
         } else {
             log.warn(
-                    "An authorize url initializer replaced the previous when being registered. platform: {}," +
-                            " identifier: {}, current: {}, previous: {}",
-                    platform, identifier, authorizeURLInitializer, previous
+                    "The previous authorize url initializer has been replaced. platform: {}, identifier: {}," +
+                            " previous: {}, current: {}",
+                    platform, identifier, previous, authorizeURLInitializer
             );
         }
         return previous;
@@ -221,9 +222,8 @@ public final class OAuth2Client {
             );
         } else {
             log.warn(
-                    "An exchanger replaced the previous when being registered. platform: {}, identifier: {}," +
-                            " current: {}, previous: {}",
-                    platform, identifier, exchanger, previous
+                    "The previous exchanger has been replaced. platform: {}, identifier: {}, previous: {}, current: {}",
+                    platform, identifier, previous, exchanger
             );
         }
         return previous;

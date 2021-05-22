@@ -38,7 +38,7 @@ import java.io.IOException;
 public abstract class AbstractOAuth2RequestExecutor<Q> {
 
     /** Logger. */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final @NotNull Logger log = LoggerFactory.getLogger(getClass());
 
     // ##################################################################################
 

@@ -32,7 +32,7 @@ public enum BuiltinOAuth2Platform {
     ;
 
     /** Identifier, for more details see {@link OAuth2PlatformSupplier#platform()}. */
-    private final String identifier;
+    private final @NotNull String identifier;
 
     // ##################################################################################
     // #################### enhanced getter #############################################

@@ -41,7 +41,7 @@ import java.time.Duration;
 public final class GiteeOAuth2Token extends AbstractRefreshableOAuth2Token {
 
     /** FIXME Not tested, temporarily assumed to be one week. */
-    private static final Duration REFRESH_TOKEN_VALID_TIME = Duration.ofDays(7);
+    private static final @NotNull Duration REFRESH_TOKEN_VALID_TIME = Duration.ofDays(7);
 
     // ##################################################################################
     // #################### enhanced getter #############################################

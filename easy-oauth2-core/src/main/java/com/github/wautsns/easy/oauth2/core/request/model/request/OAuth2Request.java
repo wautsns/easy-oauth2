@@ -17,6 +17,7 @@ package com.github.wautsns.easy.oauth2.core.request.model.request;
 
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2Headers;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
+import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
@@ -157,13 +158,8 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     // ##################################################################################
 
     @Override
-    public String toString() {
-        return "OAuth2Request{" +
-                "method=" + method +
-                ", url=" + url +
-                ", headers=" + headers +
-                ", entity=" + entity +
-                '}';
+    public @NotNull String toString() {
+        return OAuth2DataUtils.convertObjectToJSON(this);
     }
 
 }

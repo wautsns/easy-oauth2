@@ -25,6 +25,7 @@ import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2Request;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2RequestMethod;
 import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2Response;
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -40,13 +41,13 @@ import java.io.InputStream;
 public class OAuth2RequestExecutorBasedOnApacheHttpclientTest {
 
     /** Logger. */
-    private static final Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorBasedOnApacheHttpclientTest.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorBasedOnApacheHttpclientTest.class);
 
     // ##################################################################################
 
     @Test
     public void testExecute() throws Exception {
-        OAuth2RequestExecutorFactory<?> factory = OAuth2RequestExecutorFactoryManager.any();
+        OAuth2RequestExecutorFactory<?> factory = OAuth2RequestExecutorFactoryManager.instance();
         AbstractOAuth2RequestExecutor<?> executor = factory.create(new OAuth2RequestExecutorProperties());
         String urlWithoutQueryAndAnchor = "https://api.github.com/users/wautsns";
         OAuth2URL url = new OAuth2URL(urlWithoutQueryAndAnchor, 1);

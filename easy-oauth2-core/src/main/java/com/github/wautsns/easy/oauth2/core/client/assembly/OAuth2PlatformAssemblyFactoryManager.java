@@ -32,14 +32,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class OAuth2PlatformAssemblyFactoryManager {
 
     /** Logger. */
-    private static final Logger log = LoggerFactory.getLogger(OAuth2PlatformAssemblyFactoryManager.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(OAuth2PlatformAssemblyFactoryManager.class);
 
     // ##################################################################################
 
     /** Factory group by platform. */
-    private static final @NotNull Map<@NotNull String, @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?>> factories = new ConcurrentHashMap<>();
+    private static final @NotNull Map<@NotNull String, @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?>> INSTANCES =
+            new ConcurrentHashMap<>();
 
-    // Register OAuth2PlatformAssemblyFactory automatically through java spi.
+    // Register factories automatically through java spi.
     static {
         log.info("Ready to register factories automatically through java spi.");
         ServiceLoader.load(OAuth2PlatformAssemblyFactory.class)
@@ -52,25 +53,22 @@ public final class OAuth2PlatformAssemblyFactoryManager {
     // ##################################################################################
 
     /**
-     * Return a factory for the given {@code platform}.
+     * Return an instance for the given {@code platform}.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
-     * thrown.</li>
+     * <li>If there is no such factory, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
      * @param platform platform
-     * @return factory
+     * @return instance
      */
-    public static @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?> one(@NotNull String platform) {
-        OAuth2PlatformAssemblyFactory<?, ?, ?, ?> factory = factories.get(platform);
+    public static @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?> instance(@NotNull String platform) {
+        OAuth2PlatformAssemblyFactory<?, ?, ?, ?> factory = INSTANCES.get(platform);
         if (factory != null) {
             return factory;
         } else {
-            throw new IllegalArgumentException(
-                    String.format("There is no such factory. platform: %s.", platform)
-            );
+            throw new IllegalStateException(String.format("There is no such instance. platform: %s.", platform));
         }
     }
 
@@ -79,28 +77,22 @@ public final class OAuth2PlatformAssemblyFactoryManager {
     // ##################################################################################
 
     /**
-     * Register the given {@code factory}.
+     * Register the given {@code instance}.
      *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the platform of the {@code factory} already exists in {@code this} manager, the previous will be
-     * replaced.</li>
-     * </ul>
-     *
-     * @param factory request executor factory
-     * @return previous factory, or {@code null} if not exists
+     * @param instance request executor instance
+     * @return previous instance, or {@code null} if not exists
      */
     @SuppressWarnings("rawtypes")
     public static @Nullable OAuth2PlatformAssemblyFactory<?, ?, ?, ?> register(
-            @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?> factory) {
-        String platform = factory.platform();
-        OAuth2PlatformAssemblyFactory previous = factories.put(platform, factory);
+            @NotNull OAuth2PlatformAssemblyFactory<?, ?, ?, ?> instance) {
+        String platform = instance.platform();
+        OAuth2PlatformAssemblyFactory previous = INSTANCES.put(platform, instance);
         if (previous == null) {
-            log.info("A factory has been registered successfully. platform: {}", platform);
+            log.info("An instance has been registered successfully. platform: {}", platform);
         } else {
             log.warn(
-                    "A factory replaced the previous when being registered. platform: {}, current: {}, previous: {}",
-                    platform, factory, previous
+                    "The previous instance has been replaced. platform: {}, previous: {}, current: {}",
+                    platform, previous, instance
             );
         }
         return previous;

@@ -37,14 +37,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class OAuth2RequestExecutorFactoryManager {
 
     /** Logger. */
-    private static final Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
 
     // ##################################################################################
 
-    /** Factory group by identifier. */
-    private static final @NotNull Map<@NotNull String, @NotNull OAuth2RequestExecutorFactory<?>> factories = new ConcurrentHashMap<>();
+    /** Instance group by its type. */
+    private static final @NotNull Map<@NotNull Class<?>, @NotNull OAuth2RequestExecutorFactory<?>> INSTANCES =
+            new ConcurrentHashMap<>();
 
-    // Register OAuth2RequestExecutorFactory automatically through java spi.
+    // Register factories automatically through java spi.
     static {
         log.info("Ready to register factories automatically through java spi.");
         ServiceLoader.load(OAuth2RequestExecutorFactory.class)
@@ -57,49 +58,47 @@ public final class OAuth2RequestExecutorFactoryManager {
     // ##################################################################################
 
     /**
-     * Return any enabled factory.
+     * Return any of the enabled instance.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
-     * thrown.</li>
+     * <li>If there is no such instance, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
-     * @return factory
+     * @return instance
      */
-    public static @NotNull OAuth2RequestExecutorFactory<?> any() {
-        return factories.values().stream()
+    public static @NotNull OAuth2RequestExecutorFactory<?> instance() {
+        return INSTANCES.values().stream()
                 .filter(OAuth2RequestExecutorFactory::enabled)
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("There is no enabled factory."));
+                .orElseThrow(() -> new IllegalStateException("There is no such instance."));
     }
 
     /**
-     * Return an enabled factory with the given {@code identifier}.
+     * Return an instance of the given {@code type}.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code identifier} is {@code null}, the method equals to {@link #any()}.</li>
-     * <li>If there is no such factory registered in {@code this} manager, an {@link IllegalArgumentException} will be
-     * thrown.</li>
+     * <li>If the {@code type} is {@link OAuth2RequestExecutorFactory}, the method equals to {@link #instance()}.</li>
+     * <li>If there is no such instance, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
-     * @param identifier identifier
-     * @return factory
+     * @param type type
+     * @return instance
      */
-    public static @NotNull OAuth2RequestExecutorFactory<?> one(@Nullable String identifier) {
-        if (identifier == null) { return any(); }
-        OAuth2RequestExecutorFactory<?> factory = factories.get(identifier);
+    @SuppressWarnings("unchecked")
+    public static <F extends OAuth2RequestExecutorFactory<?>> @NotNull F instance(@NotNull Class<F> type) {
+        F factory = (F) INSTANCES.get(type);
         if (factory == null) {
-            throw new IllegalArgumentException(
-                    String.format("There is no such factory. identifier: %s.", identifier)
-            );
+            if (type == OAuth2RequestExecutorFactory.class) {
+                return (F) instance();
+            } else {
+                throw new IllegalStateException(String.format("There is no such instance. type: %s", type));
+            }
         } else if (factory.enabled()) {
             return factory;
         } else {
-            throw new IllegalArgumentException(
-                    String.format("There is no such factory. %s is not enabled.", identifier)
-            );
+            throw new IllegalStateException(String.format("The instance is disabled. type: %s", type));
         }
     }
 
@@ -108,27 +107,22 @@ public final class OAuth2RequestExecutorFactoryManager {
     // ##################################################################################
 
     /**
-     * Register the given {@code factory}.
+     * Register the given {@code instance}.
      *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the identifier of the {@code factory} already exists in {@code this} manager, the previous will be
-     * replaced.</li>
-     * </ul>
-     *
-     * @param factory request executor factory
-     * @return previous factory, or {@code null} if not exists
+     * @param instance instance
+     * @return previous instance, or {@code null} if not exists
      */
     @SuppressWarnings("rawtypes")
-    public static @Nullable OAuth2RequestExecutorFactory<?> register(@NotNull OAuth2RequestExecutorFactory<?> factory) {
-        String identifier = factory.identifier();
-        OAuth2RequestExecutorFactory previous = factories.put(identifier, factory);
+    public static @Nullable OAuth2RequestExecutorFactory<?> register(
+            @NotNull OAuth2RequestExecutorFactory<?> instance) {
+        Class<? extends OAuth2RequestExecutorFactory> type = instance.getClass();
+        OAuth2RequestExecutorFactory previous = INSTANCES.put(type, instance);
         if (previous == null) {
-            log.info("A factory has been registered successfully. identifier: {}", identifier);
+            log.info("An instance has been registered successfully. type: {}, instance: {}", type, instance);
         } else {
             log.warn(
-                    "A factory replaced the previous when being registered. identifier: {}, current: {}, previous: {}",
-                    identifier, factory, previous
+                    "The previous instance has been replaced. type: {}, previous: {}, current: {}",
+                    type, previous, instance
             );
         }
         return previous;

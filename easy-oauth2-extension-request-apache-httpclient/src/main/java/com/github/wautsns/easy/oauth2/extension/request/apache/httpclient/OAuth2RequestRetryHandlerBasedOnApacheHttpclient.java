@@ -17,6 +17,7 @@ package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient;
 
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.jetbrains.annotations.NotNull;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -33,7 +34,7 @@ import java.util.List;
 final class OAuth2RequestRetryHandlerBasedOnApacheHttpclient extends DefaultHttpRequestRetryHandler {
 
     /** IOException types that should not be retried. */
-    private static final List<Class<? extends IOException>> EXCEPTIONS_NOT_RETRIED = Arrays.asList(
+    private static final @NotNull List<@NotNull Class<? extends IOException>> EXCEPTIONS_NOT_RETRIED = Arrays.asList(
             InterruptedIOException.class,
             UnknownHostException.class,
             HttpHostConnectException.class,

@@ -38,7 +38,7 @@ import java.time.Duration;
 public final class GitHubOAuth2Token extends AbstractOAuth2Token {
 
     /** FIXME Not tested, temporarily assumed to be one day. */
-    private static final Duration ACCESS_TOKEN_VALID_TIME = Duration.ofDays(1);
+    private static final @NotNull Duration ACCESS_TOKEN_VALID_TIME = Duration.ofDays(1);
 
     // ##################################################################################
     // #################### enhanced getter #############################################

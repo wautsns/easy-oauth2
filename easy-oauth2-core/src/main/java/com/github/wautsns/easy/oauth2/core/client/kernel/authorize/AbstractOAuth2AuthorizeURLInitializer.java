@@ -41,7 +41,7 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
                    OAuth2OperationInitializeAuthorizeURL {
 
     /** Logger. */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final @NotNull Logger log = LoggerFactory.getLogger(getClass());
 
     // ##################################################################################
 

@@ -64,12 +64,12 @@ import java.util.UUID;
 public abstract class AbstractOAuth2Test {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final @NotNull Logger log = LoggerFactory.getLogger(getClass());
 
     // ##################################################################################
 
     /** Platform. */
-    private final String platform;
+    private final @NotNull String platform;
 
     // ##################################################################################
 
@@ -169,7 +169,7 @@ public abstract class AbstractOAuth2Test {
                 clientId, clientSecret, authorizeCallback
         );
         this.platform = applicationProperties.platform();
-        OAuth2PlatformAssemblyFactory factory = OAuth2PlatformAssemblyFactoryManager.one(platform);
+        OAuth2PlatformAssemblyFactory factory = OAuth2PlatformAssemblyFactoryManager.instance(platform);
         OAuth2Client.register(
                 factory.createAuthorizeURLInitializer(
                         new OAuth2AuthorizeURLInitializerMetadata(
@@ -182,7 +182,7 @@ public abstract class AbstractOAuth2Test {
                 factory.createExchanger(
                         new OAuth2ExchangerMetadata(
                                 applicationProperties,
-                                OAuth2RequestExecutorFactoryManager.any().create(initializeRequestExecutorProperties())
+                                OAuth2RequestExecutorFactoryManager.instance().create(initializeRequestExecutorProperties())
                         )
                 )
         );

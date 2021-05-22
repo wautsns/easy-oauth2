@@ -116,7 +116,7 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code identifier} is {@code null}, it will be initialized as platform.</li>
      * <li>If the {@code requestExecutor} is {@code null}, it will be initialized as {@link
-     * OAuth2RequestExecutorFactoryManager#any()}{@link OAuth2RequestExecutorFactory#create() .create()}.</li>
+     * OAuth2RequestExecutorFactoryManager#instance()}{@link OAuth2RequestExecutorFactory#create() .create()}.</li>
      * <li>The {@code applicationProperties} will be automatically validated through method {@code validate()}.</li>
      * </ul>
      *
@@ -131,7 +131,7 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
         if (requestExecutor != null) {
             this.requestExecutor = requestExecutor;
         } else {
-            this.requestExecutor = OAuth2RequestExecutorFactoryManager.any().create();
+            this.requestExecutor = OAuth2RequestExecutorFactoryManager.instance().create();
         }
         this.applicationProperties.validate();
     }
