@@ -90,7 +90,7 @@ public final class OAuth2RequestExecutorFactoryManager {
     public static <F extends OAuth2RequestExecutorFactory<?>> @NotNull F instance(@NotNull Class<F> type) {
         F factory = (F) INSTANCES.get(type);
         if (factory == null) {
-            if (type == OAuth2RequestExecutorFactory.class) {
+            if (OAuth2RequestExecutorFactory.class.equals(type)) {
                 return (F) instance();
             } else {
                 throw new IllegalStateException(String.format("There is no such instance. type: %s", type));
