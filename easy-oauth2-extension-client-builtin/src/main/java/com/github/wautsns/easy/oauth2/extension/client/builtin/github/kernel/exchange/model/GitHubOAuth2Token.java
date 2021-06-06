@@ -15,10 +15,12 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
+
 import java.time.Duration;
 
 /**
@@ -68,7 +70,7 @@ public final class GitHubOAuth2Token extends AbstractOAuth2Token {
     /**
      * Construct an instance.
      *
-     * @param raw raw
+     * @param raw {@link #raw}
      */
     public GitHubOAuth2Token(@NotNull JsonNode raw) {
         super(raw);

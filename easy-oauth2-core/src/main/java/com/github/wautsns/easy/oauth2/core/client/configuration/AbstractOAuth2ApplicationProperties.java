@@ -19,9 +19,10 @@ package com.github.wautsns.easy.oauth2.core.client.configuration;
  * Abstract oauth2 application properties.
  *
  * @author wautsns
- * @implNote Typically, an application properties include {@code clientId}, {@code clientSecret}, {@code
- *         authorizeCallback}, etc. However, the names of these properties may vary greatly from platform to platform,
- *         they are all defined by the implementation class for ease of understanding..
+ * @implNote Typically, an application properties include {@code clientId}, {@code
+ *         clientSecret}, {@code authorizeCallback}, etc. However, the names of these properties may
+ *         vary greatly from platform to platform, they are all defined by the implementation class
+ *         for ease of understanding.
  * @since Apr 01, 2021
  */
 public abstract class AbstractOAuth2ApplicationProperties implements OAuth2PlatformSupplier {
@@ -30,12 +31,7 @@ public abstract class AbstractOAuth2ApplicationProperties implements OAuth2Platf
     // #################### validate ####################################################
     // ##################################################################################
 
-    /**
-     * Validate properties.
-     *
-     * @implNote Usually, you only need to check whether the value of a property is {@code null}, and whether
-     *         the collection contains {@code null} elements, etc.
-     */
+    /** Validate properties. */
     public abstract void validate();
 
 }

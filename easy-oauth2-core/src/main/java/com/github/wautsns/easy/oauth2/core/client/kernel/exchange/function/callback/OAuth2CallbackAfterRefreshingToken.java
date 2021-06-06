@@ -17,6 +17,7 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.call
 
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractRefreshableOAuth2Token;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,8 +40,8 @@ public interface OAuth2CallbackAfterRefreshingToken<T extends AbstractRefreshabl
      * @param token token
      * @param refreshedToken refreshed token
      * @throws OAuth2Exception if an oauth2 related error occurs
-     * @implNote Please be careful about throwing exceptions! This will cause subsequent operations to not be
-     *         performed properly.
+     * @implNote Please be careful about throwing exceptions! This will cause subsequent
+     *         operations to not be performed properly.
      */
     void afterRefreshingToken(@NotNull T token, @NotNull T refreshedToken) throws OAuth2Exception;
 

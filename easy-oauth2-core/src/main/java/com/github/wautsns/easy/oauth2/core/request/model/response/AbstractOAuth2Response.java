@@ -15,11 +15,13 @@
  */
 package com.github.wautsns.easy.oauth2.core.request.model.response;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2IOException;
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -86,7 +88,7 @@ public abstract class AbstractOAuth2Response {
     // ##################################################################################
 
     /**
-     * Return input stream of the body.
+     * Return input stream of body.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
@@ -99,18 +101,16 @@ public abstract class AbstractOAuth2Response {
     public abstract @Nullable InputStream bodyInputStream() throws OAuth2IOException;
 
     /**
-     * Read the {@link #bodyInputStream() jsonBodyInputStream} as a tree.
+     * Read json input stream as tree.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>Usually, the method can be called only once for each instance.</li>
-     * <li>The method equals to {@code OAuth2DataUtils.readJSONInputStreamAsTree(bodyInputStream())}.</li>
+     * <li>The method equals to {@link OAuth2DataUtils#readJSONInputStreamAsTree(InputStream)
+     * OAuth2DataUtils.readJSONInputStreamAsTree}({@link #bodyInputStream()}).</li>
      * </ul>
      *
-     * @return root node of the tree
+     * @return root node of tree
      * @throws OAuth2IOException if an I/O error occurs
-     * @see #bodyInputStream()
-     * @see OAuth2DataUtils#readJSONInputStreamAsTree(InputStream)
      */
     public final @NotNull JsonNode readJSONBodyInputStreamAsTree() throws OAuth2IOException {
         return OAuth2DataUtils.readJSONInputStreamAsTree(bodyInputStream());

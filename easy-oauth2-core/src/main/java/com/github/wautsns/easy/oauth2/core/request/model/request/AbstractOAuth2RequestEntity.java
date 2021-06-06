@@ -18,7 +18,7 @@ package com.github.wautsns.easy.oauth2.core.request.model.request;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * OAuth2 request entity.
+ * Abstract oauth2 request entity.
  *
  * @author wautsns
  * @since Mar 29, 2021
@@ -37,16 +37,16 @@ public abstract class AbstractOAuth2RequestEntity {
     public abstract @NotNull String contentType();
 
     /**
-     * Return bytes of {@code this} entity.
+     * Write {@code this} object as bytes.
      *
-     * @return bytes of {@code this} entity
+     * @return bytes
      */
-    public abstract byte @NotNull [] bytes();
+    public abstract byte @NotNull [] writeAsBytes();
 
     /**
-     * Return a new instance by deep copying {@code this} object.
+     * Return new instance by deep copying {@code this} object.
      *
-     * @return a copy of {@code this} object
+     * @return copy of {@code this} object
      */
     public abstract @NotNull AbstractOAuth2RequestEntity copy();
 

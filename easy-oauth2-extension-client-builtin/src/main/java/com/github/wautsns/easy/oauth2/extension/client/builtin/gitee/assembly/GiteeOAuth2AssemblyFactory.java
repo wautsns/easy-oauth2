@@ -23,6 +23,7 @@ import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configurati
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.authorize.GiteeOAuth2AuthorizeURLInitializer;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.GiteeOAuth2Exchanger;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +32,8 @@ import org.jetbrains.annotations.NotNull;
  * @author wautsns
  * @since May 14, 2021
  */
-public final class GiteeOAuth2AssemblyFactory implements OAuth2PlatformAssemblyFactory<GiteeOAuth2ApplicationProperties, GiteeOAuth2AuthorizationProperties, GiteeOAuth2AuthorizeURLInitializer, GiteeOAuth2Exchanger> {
+public final class GiteeOAuth2AssemblyFactory
+        implements OAuth2PlatformAssemblyFactory<GiteeOAuth2ApplicationProperties, GiteeOAuth2AuthorizationProperties, GiteeOAuth2AuthorizeURLInitializer, GiteeOAuth2Exchanger> {
 
     // ##################################################################################
     // #################### enhanced getter #############################################

@@ -13,56 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model;
+package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.plugin;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.protocol.HttpContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.time.Duration;
 
 /**
- * OAuth2 callback query.
+ * Apache httpclient oauth2 connection keep alive strategy.
  *
  * @author wautsns
- * @since Mar 31, 2021
+ * @since May 26, 2021
  */
-public final class OAuth2CallbackQuery {
+public final class ApacheHttpclientOAuth2ConnectionKeepAliveStrategy
+        extends DefaultConnectionKeepAliveStrategy {
 
-    /** Raw callback query. */
-    private final @NotNull JsonNode raw;
+    /** Keep alive timeout millis. */
+    private final long keepAliveTimeoutMillis;
 
     // ##################################################################################
     // #################### enhanced getter #############################################
     // ##################################################################################
 
-    /**
-     * Return raw callback query.
-     *
-     * @return {@link #raw}
-     */
-    public @NotNull JsonNode raw() {
-        return raw;
-    }
-
-    // ##################################################################################
-
-    /**
-     * Return authorization code through field `code`.
-     *
-     * @return authorization code
-     */
-    public @Nullable String code() {
-        return raw.path("code").asText(null);
-    }
-
-    /**
-     * Return state through field `state`.
-     *
-     * @return state
-     */
-    public @Nullable String state() {
-        return raw.path("state").asText(null);
+    @Override
+    public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+        long value = super.getKeepAliveDuration(response, context);
+        return (value < 0) ? keepAliveTimeoutMillis : value;
     }
 
     // ##################################################################################
@@ -72,10 +51,10 @@ public final class OAuth2CallbackQuery {
     /**
      * Construct an instance.
      *
-     * @param raw {@link #raw}
+     * @param keepAliveTimeout keep alive timeout
      */
-    public OAuth2CallbackQuery(@NotNull JsonNode raw) {
-        this.raw = Objects.requireNonNull(raw);
+    public ApacheHttpclientOAuth2ConnectionKeepAliveStrategy(@NotNull Duration keepAliveTimeout) {
+        this.keepAliveTimeoutMillis = keepAliveTimeout.toMillis();
     }
 
 }

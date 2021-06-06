@@ -21,6 +21,7 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.function.oper
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2AuthorizationProperties;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,7 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * @author wautsns
  * @since May 11, 2021
  */
-public final class GitHubOAuth2AuthorizeURLInitializer extends AbstractOAuth2AuthorizeURLInitializer<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties> {
+public final class GitHubOAuth2AuthorizeURLInitializer
+        extends AbstractOAuth2AuthorizeURLInitializer<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties> {
 
     // ##################################################################################
     // #################### initialize oauth2 operation #################################
@@ -42,9 +44,7 @@ public final class GitHubOAuth2AuthorizeURLInitializer extends AbstractOAuth2Aut
         template.query()
                 .unique("client_id", metadata.applicationProperties().getClientId())
                 .unique("redirect_uri", metadata.applicationProperties().getAuthorizeCallback());
-        metadata.authorizationProperties()
-                .addScopeToQuery(template)
-                .addAllowSignupToQuery(template);
+        metadata.authorizationProperties().addToQuery(template);
         return state -> {
             OAuth2URL url = template.copy();
             url.query().unique("state", state);

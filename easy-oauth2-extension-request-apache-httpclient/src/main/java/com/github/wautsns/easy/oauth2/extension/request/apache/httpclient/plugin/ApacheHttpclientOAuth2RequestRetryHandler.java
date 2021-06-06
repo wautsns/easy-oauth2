@@ -13,33 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient;
+package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.plugin;
 
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.jetbrains.annotations.NotNull;
-import javax.net.ssl.SSLException;
+
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.net.ssl.SSLException;
+
 /**
- * OAuth2 request retry handler based on apache httpclient.
+ * Apache httpclient oauth2 request retry handler.
  *
  * @author wautsns
  * @since Mar 30, 2021
  */
-final class OAuth2RequestRetryHandlerBasedOnApacheHttpclient extends DefaultHttpRequestRetryHandler {
+public final class ApacheHttpclientOAuth2RequestRetryHandler
+        extends DefaultHttpRequestRetryHandler {
 
-    /** IOException types that should not be retried. */
-    private static final @NotNull List<@NotNull Class<? extends IOException>> EXCEPTIONS_NOT_RETRIED = Arrays.asList(
-            InterruptedIOException.class,
-            UnknownHostException.class,
-            HttpHostConnectException.class,
-            SSLException.class
-    );
+    /** The IOException types that should not be retried. */
+    private static final @NotNull List<@NotNull Class<? extends IOException>> NON_RETRYABLE_CLASS_LIST =
+            Arrays.asList(
+                    UnknownHostException.class,
+                    HttpHostConnectException.class,
+                    SSLException.class
+            );
 
     // ##################################################################################
     // #################### constructor #################################################
@@ -48,10 +50,10 @@ final class OAuth2RequestRetryHandlerBasedOnApacheHttpclient extends DefaultHttp
     /**
      * Construct an instance.
      *
-     * @param retryCount retry count
+     * @param retryTimes retry times
      */
-    public OAuth2RequestRetryHandlerBasedOnApacheHttpclient(int retryCount) {
-        super(retryCount, false, EXCEPTIONS_NOT_RETRIED);
+    public ApacheHttpclientOAuth2RequestRetryHandler(int retryTimes) {
+        super(retryTimes, false, NON_RETRYABLE_CLASS_LIST);
     }
 
 }

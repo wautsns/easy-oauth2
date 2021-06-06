@@ -20,6 +20,10 @@ import com.github.wautsns.easy.oauth2.core.request.executor.configuration.OAuth2
 import com.github.wautsns.easy.oauth2.core.request.model.request.AbstractOAuth2RequestEntity;
 import com.github.wautsns.easy.oauth2.core.request.model.request.OAuth2RequestMethod;
 import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2Response;
+import com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.model.ApacheHttpclientOAuth2Response;
+import com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.plugin.ApacheHttpclientOAuth2ConnectionKeepAliveStrategy;
+import com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.plugin.ApacheHttpclientOAuth2RequestRetryHandler;
+
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -32,31 +36,35 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * OAuth2 request executor based on apache httpclient.
+ * Apache httpclient oauth2 request executor.
  *
  * @author wautsns
+ * @see <a href="https://hc.apache.org/httpcomponents-client-4.5.x/index.html">apache
+ *         httpcomponents-client-4.5.x</a>
  * @since Mar 30, 2021
  */
-public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends AbstractOAuth2RequestExecutor<HttpRequestBase> {
+public final class ApacheHttpclientOAuth2RequestExecutor
+        extends AbstractOAuth2RequestExecutor<HttpRequestBase> {
 
-    /** Raw http client. */
-    private final @NotNull HttpClient raw;
+    /** Delegate. */
+    private final @NotNull HttpClient delegate;
 
     // ##################################################################################
-    // #################### request related operation ###################################
+    // #################### request delegate related operation ##########################
     // ##################################################################################
 
     @Override
-    protected @NotNull HttpRequestBase initializeActualRequest(
+    protected @NotNull HttpRequestBase initializeRequestDelegate(
             @NotNull OAuth2RequestMethod method, @NotNull String url) {
         switch (method) {
             case GET:
@@ -74,28 +82,30 @@ public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends Abstract
             case HEAD:
                 return new HttpHead(url);
             default:
-                throw new IllegalStateException(String.format("Illegal method: %s", method));
+                throw new IllegalStateException();
         }
     }
 
     @Override
-    protected void addHeader(@NotNull HttpRequestBase actualRequest, @NotNull String name, @NotNull String value) {
-        actualRequest.addHeader(name, value);
+    protected void addRequestDelegateHeader(
+            @NotNull HttpRequestBase requestDelegate, @NotNull String name, @NotNull String value) {
+        requestDelegate.addHeader(name, value);
     }
 
     @Override
-    protected void setContentTypeAndEntity(
-            @NotNull HttpRequestBase actualRequest, @NotNull AbstractOAuth2RequestEntity entity) {
-        if (actualRequest instanceof HttpEntityEnclosingRequestBase) {
-            ByteArrayEntity actualEntity = new ByteArrayEntity(entity.bytes());
-            actualEntity.setContentType(entity.contentType());
-            ((HttpEntityEnclosingRequestBase) actualRequest).setEntity(actualEntity);
+    protected void setRequestDelegateContentTypeAndEntity(
+            @NotNull HttpRequestBase requestDelegate, @NotNull AbstractOAuth2RequestEntity entity) {
+        if (requestDelegate instanceof HttpEntityEnclosingRequestBase) {
+            ByteArrayEntity entityDelegate = new ByteArrayEntity(entity.writeAsBytes());
+            entityDelegate.setContentType(entity.contentType());
+            ((HttpEntityEnclosingRequestBase) requestDelegate).setEntity(entityDelegate);
         }
     }
 
     @Override
-    protected @NotNull AbstractOAuth2Response executeActualRequest(@NotNull HttpRequestBase actualRequest) throws IOException {
-        return new OAuth2ResponseBasedOnApacheHttpclient(raw.execute(actualRequest));
+    protected @NotNull AbstractOAuth2Response executeRequestDelegate(
+            @NotNull HttpRequestBase requestDelegate) throws IOException {
+        return new ApacheHttpclientOAuth2Response(delegate.execute(requestDelegate));
     }
 
     // ##################################################################################
@@ -105,47 +115,55 @@ public final class OAuth2RequestExecutorBasedOnApacheHttpclient extends Abstract
     /**
      * Construct an instance.
      *
-     * @param properties request executor properties
+     * @param properties properties
      */
-    public OAuth2RequestExecutorBasedOnApacheHttpclient(@NotNull OAuth2RequestExecutorProperties properties) {
+    public ApacheHttpclientOAuth2RequestExecutor(
+            @NotNull OAuth2RequestExecutorProperties properties) {
         HttpClientBuilder builder = HttpClientBuilder.create();
         // Set request config.
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        if (properties.getConnectTimeout() != null) {
-            requestConfigBuilder.setConnectTimeout((int) properties.getConnectTimeout().toMillis());
+        Duration connectTimeout = properties.getConnectTimeout();
+        if (connectTimeout != null) {
+            requestConfigBuilder.setConnectTimeout((int) connectTimeout.toMillis());
         }
-        if (properties.getSocketTimeout() != null) {
-            requestConfigBuilder.setSocketTimeout((int) properties.getSocketTimeout().toMillis());
+        Duration socketTimeout = properties.getSocketTimeout();
+        if (socketTimeout != null) {
+            requestConfigBuilder.setSocketTimeout((int) socketTimeout.toMillis());
         }
         builder.setDefaultRequestConfig(requestConfigBuilder.build());
-        // Set connect manager.
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        if (properties.getMaxConcurrentRequests() != null) {
-            connectionManager.setMaxTotal(properties.getMaxConcurrentRequests());
-            connectionManager.setDefaultMaxPerRoute(properties.getMaxConcurrentRequests());
+        // Set connection manager.
+        PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager();
+        Integer maxConcurrentRequests = properties.getMaxConcurrentRequests();
+        if (maxConcurrentRequests != null) {
+            connectionManager.setMaxTotal(maxConcurrentRequests);
+            connectionManager.setDefaultMaxPerRoute(maxConcurrentRequests);
         }
         builder.setConnectionManager(connectionManager);
         // Set max idle time.
-        if (properties.getMaxIdleTime() != null) {
-            builder.evictIdleConnections(properties.getMaxIdleTime().toMillis(), TimeUnit.MILLISECONDS);
+        Duration maxIdleTime = properties.getMaxIdleTime();
+        if (maxIdleTime != null) {
+            builder.evictIdleConnections(maxIdleTime.toMillis(), TimeUnit.MILLISECONDS);
         }
-        // Set keep alive.
-        if (properties.getKeepAliveTimeout() != null) {
-            long keepAliveTimeoutMillis = properties.getKeepAliveTimeout().toMillis();
-            ConnectionKeepAliveStrategy keepAliveStrategy = (resp, ctx) -> keepAliveTimeoutMillis;
-            builder.setKeepAliveStrategy(keepAliveStrategy);
+        // Set keep alive strategy.
+        Duration keepAliveTimeout = properties.getKeepAliveTimeout();
+        if (keepAliveTimeout != null) {
+            builder.setKeepAliveStrategy(
+                    new ApacheHttpclientOAuth2ConnectionKeepAliveStrategy(keepAliveTimeout)
+            );
         }
         // Set retry handler.
-        if ((properties.getRetryTimes() != null) && (properties.getRetryTimes() >= 1)) {
-            builder.setRetryHandler(new OAuth2RequestRetryHandlerBasedOnApacheHttpclient(properties.getRetryTimes()));
+        Integer retryTimes = properties.getRetryTimes();
+        if ((retryTimes != null) && (retryTimes >= 1)) {
+            builder.setRetryHandler(new ApacheHttpclientOAuth2RequestRetryHandler(retryTimes));
         }
         // Set proxy.
-        if (properties.getProxy() != null) {
-            builder.setProxy(HttpHost.create(properties.getProxy()));
+        String proxy = properties.getProxy();
+        if (proxy != null) {
+            builder.setProxy(HttpHost.create(proxy));
         }
         // Build apache http client.
-        this.raw = builder.build();
-        log.info("Request executor has been initialized with properties: {}", properties);
+        this.delegate = builder.build();
     }
 
 }

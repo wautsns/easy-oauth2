@@ -18,7 +18,9 @@ package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configurat
 import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,7 +31,8 @@ import java.util.stream.Collectors;
  * @author wautsns
  * @since May 05, 2021
  */
-public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2AuthorizationProperties {
+public final class GiteeOAuth2AuthorizationProperties
+        extends AbstractOAuth2AuthorizationProperties {
 
     /** Permissions. */
     private List<GiteeOAuth2Permission> permissions;
@@ -48,18 +51,19 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
     // ##################################################################################
 
     /**
-     * Add `scope` to the {@code url} query.
+     * Add properties to the given {@code url} query.
      *
      * @param url url
-     * @return self reference
+     * @return the {@code url}
      */
-    public @NotNull GiteeOAuth2AuthorizationProperties addScopeToQuery(OAuth2URL url) {
-        if (permissions == null) { return this; }
-        String scope = permissions.stream()
-                .map(GiteeOAuth2Permission::value)
-                .collect(Collectors.joining(" "));
-        url.query().unique("scope", scope);
-        return this;
+    public @NotNull OAuth2URL addToQuery(@NotNull OAuth2URL url) {
+        if (permissions != null) {
+            String scope = permissions.stream()
+                    .map(GiteeOAuth2Permission::value)
+                    .collect(Collectors.joining(" "));
+            url.query().unique("scope", scope);
+        }
+        return url;
     }
 
     // ##################################################################################
@@ -68,7 +72,9 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
 
     @Override
     public void validate() {
-        if (permissions != null) { permissions.forEach(Objects::requireNonNull); }
+        if (permissions != null) {
+            permissions.forEach(Objects::requireNonNull);
+        }
     }
 
     // ##################################################################################
@@ -79,7 +85,8 @@ public final class GiteeOAuth2AuthorizationProperties extends AbstractOAuth2Auth
         return permissions;
     }
 
-    public GiteeOAuth2AuthorizationProperties setPermissions(List<GiteeOAuth2Permission> permissions) {
+    public GiteeOAuth2AuthorizationProperties setPermissions(
+            List<GiteeOAuth2Permission> permissions) {
         this.permissions = permissions;
         return this;
     }

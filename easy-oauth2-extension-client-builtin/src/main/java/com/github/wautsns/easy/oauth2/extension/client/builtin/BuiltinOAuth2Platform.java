@@ -16,7 +16,9 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin;
 
 import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSupplier;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -27,11 +29,27 @@ import java.util.Objects;
  */
 public enum BuiltinOAuth2Platform {
 
+    /**
+     * Gitee.
+     *
+     * @see <a href="https://gitee.com/">Official Site</a>
+     * @see <a href="https://gitee.com/api/v5/oauth_doc">OAuth2 Doc</a>
+     */
     GITEE("gitee"),
+
+    /**
+     * GitHub.
+     *
+     * @see <a href="https://github.com/">Official Site</a>
+     * @see <a href="https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps">
+     *         OAuth2 Doc</a>
+     */
     GITHUB("github"),
     ;
 
-    /** Identifier, for more details see {@link OAuth2PlatformSupplier#platform()}. */
+    // ##################################################################################
+
+    /** {@link OAuth2PlatformSupplier#platform() Platform identifier}. */
     private final @NotNull String identifier;
 
     // ##################################################################################
@@ -39,9 +57,9 @@ public enum BuiltinOAuth2Platform {
     // ##################################################################################
 
     /**
-     * Return identifier.
+     * Return platform identifier.
      *
-     * @return identifier, for more details see {@link OAuth2PlatformSupplier#platform()}
+     * @return {@link #identifier platform identifier}
      */
     public @NotNull String identifier() {
         return identifier;
@@ -54,7 +72,7 @@ public enum BuiltinOAuth2Platform {
     /**
      * Construct an instance.
      *
-     * @param identifier identifier
+     * @param identifier {@link #identifier platform identifier}
      */
     BuiltinOAuth2Platform(@NotNull String identifier) {
         this.identifier = Objects.requireNonNull(identifier);

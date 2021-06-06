@@ -22,6 +22,7 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration
 import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.OAuth2AuthorizeURLInitializerMetadata;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractOAuth2Exchanger;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,15 +54,16 @@ public interface OAuth2PlatformAssemblyFactory<A extends AbstractOAuth2Applicati
     // ##################################################################################
 
     /**
-     * Initialize authorize url initializer.
+     * Create authorize url initializer.
      *
      * @param metadata metadata
      * @return authorize url initializer
      */
-    @NotNull I createAuthorizeURLInitializer(@NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata);
+    @NotNull I createAuthorizeURLInitializer(
+            @NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata);
 
     /**
-     * Initialize exchanger.
+     * Create exchanger.
      *
      * @param metadata metadata
      * @return exchanger

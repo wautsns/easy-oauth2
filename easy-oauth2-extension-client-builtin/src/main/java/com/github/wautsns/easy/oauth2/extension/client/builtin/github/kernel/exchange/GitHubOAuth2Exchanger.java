@@ -15,7 +15,6 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenAvailableOAuth2Exchanger;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
@@ -34,6 +33,8 @@ import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model.GitHubOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.model.GitHubOAuth2User;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,7 +43,8 @@ import org.jetbrains.annotations.NotNull;
  * @author wautsns
  * @since May 11, 2021
  */
-public final class GitHubOAuth2Exchanger extends AbstractTokenAvailableOAuth2Exchanger<GitHubOAuth2ApplicationProperties, GitHubOAuth2Token, GitHubOAuth2User> {
+public final class GitHubOAuth2Exchanger
+        extends AbstractTokenAvailableOAuth2Exchanger<GitHubOAuth2ApplicationProperties, GitHubOAuth2Token, GitHubOAuth2User> {
 
     // ##################################################################################
     // #################### initialize oauth2 api #######################################
@@ -138,7 +140,8 @@ public final class GitHubOAuth2Exchanger extends AbstractTokenAvailableOAuth2Exc
      *
      * @param metadata metadata
      */
-    public GitHubOAuth2Exchanger(@NotNull OAuth2ExchangerMetadata<GitHubOAuth2ApplicationProperties> metadata) {
+    public GitHubOAuth2Exchanger(
+            @NotNull OAuth2ExchangerMetadata<GitHubOAuth2ApplicationProperties> metadata) {
         super(metadata);
     }
 

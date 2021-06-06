@@ -17,16 +17,18 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
+
 import java.time.Duration;
 
 /**
  * Abstract refreshable oauth2 token.
  *
  * @author wautsns
- * @implNote Typically, an oauth2 token contains {@code access-token}, {@code access-token-validity-duration},
- *         {@code refresh-token}, {@code refresh-token-validity-duration}, etc. However, the names of these properties
- *         may vary greatly from platform to platform, so for ease of understanding, they are obtained from the {@code
- *         raw} by the implementation class.
+ * @implNote Typically, an oauth2 token contains {@code access-token}, {@code
+ *         access-token-validity-duration}, {@code refresh-token}, {@code
+ *         refresh-token-validity-duration}, etc. However, the names of these properties may vary
+ *         greatly from platform to platform, so for ease of understanding, they are obtained from
+ *         the {@code raw} by the implementation class.
  * @since Apr 22, 2021
  */
 public abstract class AbstractRefreshableOAuth2Token extends AbstractOAuth2Token {
@@ -56,7 +58,7 @@ public abstract class AbstractRefreshableOAuth2Token extends AbstractOAuth2Token
     /**
      * Construct an instance.
      *
-     * @param raw raw refreshable token
+     * @param raw {@link #raw}
      */
     protected AbstractRefreshableOAuth2Token(@NotNull JsonNode raw) {
         super(raw);

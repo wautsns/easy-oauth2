@@ -21,7 +21,9 @@ import com.github.wautsns.easy.oauth2.extension.client.AbstractOAuth2Test;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2Scope;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 /**
@@ -35,14 +37,15 @@ public class GitHubOAuth2Test extends AbstractOAuth2Test {
 
     @Override
     protected @NotNull String authorizeCode() {
-        return "d65795837bd0c6175033";
+        return "f6d7d9786c04f9199f66";
     }
 
     // ##################################################################################
 
     @Override
     protected @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
-            @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback) {
+            @NotNull String clientId, @NotNull String clientSecret,
+            @NotNull String authorizeCallback) {
         return new GitHubOAuth2ApplicationProperties()
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)

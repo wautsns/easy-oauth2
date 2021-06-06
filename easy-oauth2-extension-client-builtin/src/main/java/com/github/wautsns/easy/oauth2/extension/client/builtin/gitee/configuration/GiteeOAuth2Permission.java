@@ -16,6 +16,7 @@
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**

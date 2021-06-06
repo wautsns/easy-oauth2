@@ -17,7 +17,9 @@ package com.github.wautsns.easy.oauth2.extension.client.builtin.github.configura
 
 import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -33,8 +35,8 @@ public final class GitHubOAuth2ApplicationProperties extends AbstractOAuth2Appli
     /** The client secret you received from github for your oauth app. */
     private String clientSecret;
     /**
-     * Your application’s callback url. Read our <a href="https://docs.github.com/v3/oauth/">OAuth documentation</a> for
-     * more information.
+     * Your application’s callback url. Read our <a href="https://docs.github.com/v3/oauth/">OAuth
+     * documentation</a> for more information.
      */
     private String authorizeCallback;
 

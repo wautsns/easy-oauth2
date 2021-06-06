@@ -17,6 +17,7 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api;
 
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.OAuth2CallbackQuery;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,6 +40,7 @@ public interface OAuth2APIExchangeCallbackQueryForUserIdentifier {
      * @return user identifier
      * @throws OAuth2Exception if an oauth2 related error occurs
      */
-    @NotNull String exchangeForUserIdentifier(@NotNull OAuth2CallbackQuery query) throws OAuth2Exception;
+    @NotNull String exchangeForUserIdentifier(@NotNull OAuth2CallbackQuery query)
+            throws OAuth2Exception;
 
 }

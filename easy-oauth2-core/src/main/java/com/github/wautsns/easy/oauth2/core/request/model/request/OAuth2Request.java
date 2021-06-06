@@ -17,8 +17,10 @@ package com.github.wautsns.easy.oauth2.core.request.model.request;
 
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2Headers;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -46,7 +48,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return method.
      *
-     * @return method
+     * @return {@link #method}
      */
     public @NotNull OAuth2RequestMethod method() {
         return method;
@@ -55,7 +57,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return url.
      *
-     * @return url
+     * @return {@link #url}
      */
     public @NotNull OAuth2URL url() {
         return url;
@@ -64,7 +66,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return headers.
      *
-     * @return headers, or {@code null} if the headers do not assign
+     * @return {@link #headers}, or {@code null} if the headers does not assign
      */
     public @Nullable OAuth2Headers headers() {
         return headers;
@@ -73,7 +75,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Return entity.
      *
-     * @return entity, or {@code null} if the entity does not assign
+     * @return {@link #entity}, or {@code null} if the entity does not assign
      */
     public @Nullable E entity() {
         return entity;
@@ -82,14 +84,15 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     // ##################################################################################
 
     /**
-     * Return a new instance by deep copying {@code this} object.
+     * Return new instance by deep copying {@code this} object.
      *
      * @param shareURL whether to share url
      * @param shareHeaders whether to share headers
      * @param shareEntity whether to share entity
-     * @return a copy of {@code this} object
+     * @return copy of {@code this} object
      */
-    public @NotNull OAuth2Request<E> copy(boolean shareURL, boolean shareHeaders, boolean shareEntity) {
+    public @NotNull OAuth2Request<E> copy(
+            boolean shareURL, boolean shareHeaders, boolean shareEntity) {
         return new OAuth2Request<>(this, shareURL, shareHeaders, shareEntity);
     }
 
@@ -100,7 +103,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Assign headers.
      *
-     * @param headers headers
+     * @param headers {@link #headers}
      * @return self reference
      */
     public @NotNull OAuth2Request<E> headers(@Nullable OAuth2Headers headers) {
@@ -111,7 +114,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Assign entity.
      *
-     * @param entity entity
+     * @param entity {@link #entity}
      * @return self reference
      */
     public @NotNull OAuth2Request<E> entity(@Nullable E entity) {
@@ -126,8 +129,8 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
     /**
      * Construct an instance.
      *
-     * @param method method
-     * @param url url
+     * @param method {@link #method}
+     * @param url url {@link #url}
      */
     public OAuth2Request(@NotNull OAuth2RequestMethod method, @NotNull OAuth2URL url) {
         this.method = Objects.requireNonNull(method);
@@ -145,11 +148,14 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
      */
     @SuppressWarnings("unchecked")
     protected OAuth2Request(
-            @NotNull OAuth2Request<E> template, boolean shareURL, boolean shareHeaders, boolean shareEntity) {
+            @NotNull OAuth2Request<E> template, boolean shareURL, boolean shareHeaders,
+            boolean shareEntity) {
         this.method = template.method;
         this.url = shareURL ? template.url.copy() : template.url;
-        this.headers = (shareHeaders && (template.headers != null)) ? template.headers.copy() : template.headers;
-        this.entity = (shareEntity && (template.entity != null)) ? (E) template.entity.copy() : template.entity;
+        this.headers = (shareHeaders && (template.headers != null))
+                ? template.headers.copy() : template.headers;
+        this.entity = (shareEntity && (template.entity != null))
+                ? (E) template.entity.copy() : template.entity;
     }
 
     // ##################################################################################
@@ -158,8 +164,7 @@ public final class OAuth2Request<E extends AbstractOAuth2RequestEntity> {
 
     @Override
     public @NotNull String toString() {
-        return "{" +
-                "method=" + method +
+        return "{method=" + method +
                 ", url=" + url +
                 ", headers=" + headers +
                 ", entity=" + entity +

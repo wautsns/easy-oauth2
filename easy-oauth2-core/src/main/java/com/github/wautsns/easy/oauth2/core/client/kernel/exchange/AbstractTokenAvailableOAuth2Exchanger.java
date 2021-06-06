@@ -24,7 +24,9 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.OAuth2Ca
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractOAuth2Token;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -59,12 +61,15 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
         try {
             T token = exchangeCallbackQueryForToken.exchangeForToken(query);
             log.debug(
-                    "Token has been exchanged with callback query. callbackQuery: {}, token: {}",
-                    query.raw(), token.raw()
+                    "Token has been exchanged with callback query. token: {}, callbackQuery: {}",
+                    token.raw(), query.raw()
             );
             return token;
         } catch (RuntimeException | OAuth2Exception e) {
-            log.error("Failed to exchange callback query for token. callbackQuery: {}", query.raw(), e);
+            log.error(
+                    "Failed to exchange callback query for token. callbackQuery: {}",
+                    query.raw(), e
+            );
             throw e;
         }
     }
@@ -75,8 +80,8 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
         try {
             String userIdentifier = exchangeTokenForUserIdentifier.exchangeForUserIdentifier(token);
             log.debug(
-                    "User identifier has been exchanged with token. token: {}, userIdentifier: {}",
-                    token.raw(), userIdentifier
+                    "User identifier has been exchanged with token. userIdentifier: {}, token: {}",
+                    userIdentifier, token.raw()
             );
             return userIdentifier;
         } catch (RuntimeException | OAuth2Exception e) {
@@ -90,7 +95,10 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
         log.debug("Ready to exchange token for user. token: {}", token.raw());
         try {
             U user = exchangeTokenForUser.exchangeForUser(token);
-            log.debug("User has been exchanged with token. token: {}, user: {}", token.raw(), user.raw());
+            log.debug(
+                    "User has been exchanged with token. user: {}, token: {}",
+                    user.raw(), token.raw()
+            );
             return user;
         } catch (RuntimeException | OAuth2Exception e) {
             log.error("Failed to exchange token for user. token: {}", token.raw(), e);
@@ -105,12 +113,14 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
     /**
      * Construct an instance.
      *
-     * @param metadata metadata
+     * @param metadata {@link #metadata}
      */
     protected AbstractTokenAvailableOAuth2Exchanger(@NotNull OAuth2ExchangerMetadata<A> metadata) {
         super(metadata);
-        this.exchangeCallbackQueryForToken = Objects.requireNonNull(initializeAPIExchangeCallbackQueryForToken());
-        this.exchangeTokenForUserIdentifier = Objects.requireNonNull(initializeAPIExchangeTokenForUserIdentifier());
+        this.exchangeCallbackQueryForToken =
+                Objects.requireNonNull(initializeAPIExchangeCallbackQueryForToken());
+        this.exchangeTokenForUserIdentifier =
+                Objects.requireNonNull(initializeAPIExchangeTokenForUserIdentifier());
         this.exchangeTokenForUser = Objects.requireNonNull(initializeAPIExchangeTokenForUser());
     }
 
@@ -122,6 +132,7 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange callback query for token.
      *
      * @return oauth2 api: exchange callback query for token
+     * @see #exchangeForToken(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForToken<T> initializeAPIExchangeCallbackQueryForToken();
 
@@ -129,6 +140,7 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange token for user identifier.
      *
      * @return oauth2 api: exchange token for user identifier
+     * @see #exchangeForUserIdentifier(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUserIdentifier<T> initializeAPIExchangeTokenForUserIdentifier();
 
@@ -136,6 +148,7 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange token for user.
      *
      * @return oauth2 api: exchange token for user
+     * @see #exchangeForUser(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUser<T, U> initializeAPIExchangeTokenForUser();
 

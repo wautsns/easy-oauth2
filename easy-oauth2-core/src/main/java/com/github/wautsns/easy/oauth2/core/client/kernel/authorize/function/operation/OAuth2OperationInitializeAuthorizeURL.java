@@ -17,6 +17,7 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.authorize.function.ope
 
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +39,9 @@ public interface OAuth2OperationInitializeAuthorizeURL {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>state: The application generates a random string and includes it in the request. It should then check that
-     * the same value is returned after the user authorizes the app. This is used to prevent CSRF attacks.</li>
+     * <li>state: The application generates a random string and includes it in the request. It
+     * should then check that the same value is returned after the user authorizes the app. This is
+     * used to prevent CSRF attacks.</li>
      * </ul>
      *
      * @param state state

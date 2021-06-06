@@ -21,9 +21,10 @@ import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSu
  * Abstract oauth2 authorization properties.
  *
  * @author wautsns
- * @implNote Typically, an oauth2 authorization properties include {@code scopes} and other extra authorize url
- *         query parameters. However, the names of these properties may vary greatly from platform to platform, they are
- *         all defined by the implementation class for ease of understanding.
+ * @implNote Typically, an oauth2 authorization properties include {@code scopes} or other
+ *         extra authorize url query parameters. However, the names of these properties may vary
+ *         greatly from platform to platform, they are all defined by the implementation class for
+ *         ease of understanding.
  * @since May 05, 2021
  */
 public abstract class AbstractOAuth2AuthorizationProperties implements OAuth2PlatformSupplier {
@@ -32,12 +33,7 @@ public abstract class AbstractOAuth2AuthorizationProperties implements OAuth2Pla
     // #################### validate ####################################################
     // ##################################################################################
 
-    /**
-     * Validate properties.
-     *
-     * @implNote Usually, you only need to check whether the value of a property is {@code null}, and whether
-     *         the collection contains {@code null} elements, etc.
-     */
+    /** Validate properties. */
     public abstract void validate();
 
 }

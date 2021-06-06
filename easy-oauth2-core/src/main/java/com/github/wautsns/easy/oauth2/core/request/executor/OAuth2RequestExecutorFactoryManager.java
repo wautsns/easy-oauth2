@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <ul>
  * <li style="list-style-type:none">########## Notes ###############</li>
- * <li>{@link OAuth2RequestExecutorFactory} that has implemented java spi will be automatically registered.</li>
+ * <li>{@link OAuth2RequestExecutorFactory} that has implemented java spi will be automatically
+ * registered.</li>
  * </ul>
  *
  * @author wautsns
@@ -37,20 +39,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class OAuth2RequestExecutorFactoryManager {
 
     /** Logger. */
-    private static final @NotNull Logger log = LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
+    private static final @NotNull Logger log =
+            LoggerFactory.getLogger(OAuth2RequestExecutorFactoryManager.class);
 
     // ##################################################################################
 
-    /** Instance group by its type. */
-    private static final @NotNull Map<@NotNull Class<?>, @NotNull OAuth2RequestExecutorFactory<?>> INSTANCES =
+    /** Factory group by its type. */
+    private static final @NotNull Map<@NotNull Class<?>, @NotNull OAuth2RequestExecutorFactory<?>> FACTORIES =
             new ConcurrentHashMap<>();
 
     // Register factories automatically through java spi.
     static {
-        log.info("Ready to register factories automatically through java spi.");
         ServiceLoader.load(OAuth2RequestExecutorFactory.class)
                 .forEach(OAuth2RequestExecutorFactoryManager::register);
-        log.info("All factories that have implemented java spi have been automatically registered.");
+        log.info(
+                "All oauth2 request executor factories that have implemented java spi have been" +
+                        " automatically registered."
+        );
     }
 
     // ##################################################################################
@@ -58,47 +63,50 @@ public final class OAuth2RequestExecutorFactoryManager {
     // ##################################################################################
 
     /**
-     * Return any of the enabled instance.
-     *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If there is no such instance, an {@link IllegalStateException} will be thrown.</li>
-     * </ul>
+     * Return any of the enabled factory.
      *
      * @return instance
+     * @throws IllegalStateException if there is no enabled factory
      */
-    public static @NotNull OAuth2RequestExecutorFactory<?> instance() {
-        return INSTANCES.values().stream()
+    public static @NotNull OAuth2RequestExecutorFactory<?> factory() {
+        return FACTORIES.values().stream()
                 .filter(OAuth2RequestExecutorFactory::enabled)
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("There is no such instance."));
+                .orElseThrow(() -> new IllegalStateException("There is no enabled factory."));
     }
 
     /**
-     * Return an instance of the given {@code type}.
+     * Return enabled factory of the given {@code type}.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code type} is {@link OAuth2RequestExecutorFactory}, the method equals to {@link #instance()}.</li>
-     * <li>If there is no such instance, an {@link IllegalStateException} will be thrown.</li>
+     * <li>If the {@code type} is {@link OAuth2RequestExecutorFactory}, the method equals to {@link
+     * #factory()}.</li>
      * </ul>
      *
      * @param type type
-     * @return instance
+     * @param <F> the type of factory
+     * @return factory
+     * @throws IllegalStateException if there is no enabled factory of the {@code type}
      */
     @SuppressWarnings("unchecked")
-    public static <F extends OAuth2RequestExecutorFactory<?>> @NotNull F instance(@NotNull Class<F> type) {
-        F factory = (F) INSTANCES.get(type);
+    public static <F extends OAuth2RequestExecutorFactory<?>> @NotNull F factory(
+            @NotNull Class<F> type) {
+        F factory = (F) FACTORIES.get(type);
         if (factory == null) {
             if (OAuth2RequestExecutorFactory.class.equals(type)) {
-                return (F) instance();
+                return (F) factory();
             } else {
-                throw new IllegalStateException(String.format("There is no such instance. type: %s", type));
+                throw new IllegalStateException(String.format(
+                        "There is no factory of the given type. type: %s", type
+                ));
             }
         } else if (factory.enabled()) {
             return factory;
         } else {
-            throw new IllegalStateException(String.format("The instance is disabled. type: %s", type));
+            throw new IllegalStateException(String.format(
+                    "The factory of the given type is not enabled. type: %s", type
+            ));
         }
     }
 
@@ -107,22 +115,23 @@ public final class OAuth2RequestExecutorFactoryManager {
     // ##################################################################################
 
     /**
-     * Register the given {@code instance}.
+     * Register the given {@code factory}.
      *
-     * @param instance instance
-     * @return previous instance, or {@code null} if not exists
+     * @param factory factory
+     * @return previous factory, or {@code null} if not exists
      */
     @SuppressWarnings("rawtypes")
     public static @Nullable OAuth2RequestExecutorFactory<?> register(
-            @NotNull OAuth2RequestExecutorFactory<?> instance) {
-        Class<? extends OAuth2RequestExecutorFactory> type = instance.getClass();
-        OAuth2RequestExecutorFactory previous = INSTANCES.put(type, instance);
+            @NotNull OAuth2RequestExecutorFactory<?> factory) {
+        Class<? extends OAuth2RequestExecutorFactory> type = factory.getClass();
+        OAuth2RequestExecutorFactory previous = FACTORIES.put(type, factory);
         if (previous == null) {
-            log.info("An instance has been registered successfully. type: {}, instance: {}", type, instance);
+            log.info("A factory has been registered. type: {}", type);
         } else {
             log.warn(
-                    "The previous instance has been replaced. type: {}, previous: {}, current: {}",
-                    type, previous, instance
+                    "The previous factory has been replaced. type: {}, current.hash: {}," +
+                            " previous.hash: {}",
+                    type, factory.hashCode(), previous.hashCode()
             );
         }
         return previous;

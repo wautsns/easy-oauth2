@@ -25,10 +25,12 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.Abs
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2IOException;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,8 +49,8 @@ public final class OAuth2Client {
     // ##################################################################################
 
     /**
-     * Authorize url initializer group by {@link OAuth2AuthorizeURLInitializerMetadata#platform() platform} and {@link
-     * OAuth2AuthorizeURLInitializerMetadata#identifier() identifier}.
+     * Authorize url initializer group by {@link OAuth2AuthorizeURLInitializerMetadata#platform()
+     * platform} and {@link OAuth2AuthorizeURLInitializerMetadata#identifier() identifier}.
      */
     private static final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull AbstractOAuth2AuthorizeURLInitializer>> AUTHORIZE_URL_INITIALIZERS =
             new ConcurrentHashMap<>();
@@ -56,7 +58,8 @@ public final class OAuth2Client {
      * Exchanger group by {@link OAuth2ExchangerMetadata#platform() platform} and {@link
      * OAuth2ExchangerMetadata#identifier() identifier}.
      */
-    private static final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull AbstractOAuth2Exchanger>> EXCHANGERS = new ConcurrentHashMap<>();
+    private static final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull AbstractOAuth2Exchanger>> EXCHANGERS =
+            new ConcurrentHashMap<>();
 
     // ##################################################################################
     // #################### enhanced getter #############################################
@@ -67,7 +70,8 @@ public final class OAuth2Client {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The method equals to {@link #authorizeURL(String, String, String) authorizeURL(platform, null, state)}.</li>
+     * <li>The method equals to {@link #authorizeURL(String, String, String)
+     * authorizeURL}({@code platform}, {@code null}, {@code state}).</li>
      * </ul>
      *
      * @param platform platform
@@ -75,7 +79,8 @@ public final class OAuth2Client {
      * @return authorize url
      * @throws OAuth2IOException if an oauth2 related error occurs
      */
-    public static @NotNull OAuth2URL authorizeURL(@NotNull String platform, @Nullable String state) throws OAuth2Exception {
+    public static @NotNull OAuth2URL authorizeURL(@NotNull String platform, @Nullable String state)
+            throws OAuth2Exception {
         return authorizeURL(platform, null, state);
     }
 
@@ -84,36 +89,39 @@ public final class OAuth2Client {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code platform}.</li>
-     * <li>If there is no such authorize url initializer, an {@link IllegalStateException} will be thrown.</li>
+     * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code
+     * platform}.</li>
+     * <li>If there is no such authorize url initializer, an {@link IllegalStateException} will be
+     * thrown.</li>
      * </ul>
      *
      * @param platform platform
-     * @param identifier identifier, for more details see {@link OAuth2AuthorizeURLInitializerMetadata#identifier()}
+     * @param identifier identifier, for more details see {@link
+     *         OAuth2AuthorizeURLInitializerMetadata#identifier()}
      * @param state state
      * @return authorize url
      * @throws OAuth2IOException if an oauth2 related error occurs
      */
     public static @NotNull OAuth2URL authorizeURL(
-            @NotNull String platform, @Nullable String identifier, @Nullable String state) throws OAuth2Exception {
+            @NotNull String platform, @Nullable String identifier, @Nullable String state)
+            throws OAuth2Exception {
         Map<String, AbstractOAuth2AuthorizeURLInitializer> initializerGroupByIdentifier =
                 AUTHORIZE_URL_INITIALIZERS.get(platform);
         if (initializerGroupByIdentifier == null) {
-            throw new IllegalStateException(
-                    String.format("There is no such authorize url initializer. platform: %s", platform)
-            );
+            throw new IllegalStateException(String.format(
+                    "There is no such authorize url initializer. platform: %s", platform
+            ));
         }
         identifier = (identifier == null) ? platform : identifier;
-        AbstractOAuth2AuthorizeURLInitializer initializer = initializerGroupByIdentifier.get(identifier);
+        AbstractOAuth2AuthorizeURLInitializer initializer =
+                initializerGroupByIdentifier.get(identifier);
         if (initializer != null) {
             return initializer.initializeAuthorizeURL(state);
         } else {
-            throw new IllegalStateException(
-                    String.format(
-                            "There is no such authorize url initializer. platform: %s, identifier: %s",
-                            platform, identifier
-                    )
-            );
+            throw new IllegalStateException(String.format(
+                    "There is no such authorize url initializer. platform: %s, identifier: %s",
+                    platform, identifier
+            ));
         }
     }
 
@@ -124,7 +132,8 @@ public final class OAuth2Client {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The method equals to {@link #exchanger(String, String) exchanger(platform, null)}.</li>
+     * <li>The method equals to {@link #exchanger(String, String) exchanger}({@code platform},
+     * {@code null}).</li>
      * </ul>
      *
      * @param platform platform
@@ -139,28 +148,33 @@ public final class OAuth2Client {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code platform}.</li>
+     * <li>If the {@code identifier} is {@code null}, it will be initialized as the {@code
+     * platform}.</li>
      * <li>If there is no such exchanger, an {@link IllegalStateException} will be thrown.</li>
      * </ul>
      *
      * @param platform platform
-     * @param identifier identifier, for more details see {@link OAuth2ExchangerMetadata#identifier()}
+     * @param identifier identifier, for more details see {@link
+     *         OAuth2ExchangerMetadata#identifier()}
      * @return exchanger
      */
     public static @NotNull AbstractOAuth2Exchanger<?, ?> exchanger(
             @NotNull String platform, @Nullable String identifier) {
         Map<String, AbstractOAuth2Exchanger> exchangerGroupByIdentifier = EXCHANGERS.get(platform);
         if (exchangerGroupByIdentifier == null) {
-            throw new IllegalStateException(String.format("There is no such exchanger. platform: %s", platform));
+            throw new IllegalStateException(String.format(
+                    "There is no such exchanger. platform: %s", platform
+            ));
         }
         identifier = (identifier == null) ? platform : identifier;
         AbstractOAuth2Exchanger exchanger = exchangerGroupByIdentifier.get(identifier);
         if (exchanger != null) {
             return exchanger;
         } else {
-            throw new IllegalStateException(
-                    String.format("There is no such exchanger. platform: %s, identifier: %s", platform, identifier)
-            );
+            throw new IllegalStateException(String.format(
+                    "There is no such exchanger. platform: %s, identifier: %s",
+                    platform, identifier
+            ));
         }
     }
 
@@ -186,14 +200,15 @@ public final class OAuth2Client {
         I previous = (I) initializerGroupByIdentifier.put(identifier, authorizeURLInitializer);
         if (previous == null) {
             log.info(
-                    "An authorize url initializer has been registered successfully. platform: {}, identifier: {}",
+                    "An authorize url initializer has been registered. platform: {}," +
+                            " identifier: {}",
                     platform, identifier
             );
         } else {
             log.warn(
-                    "The previous authorize url initializer has been replaced. platform: {}, identifier: {}," +
-                            " previous: {}, current: {}",
-                    platform, identifier, previous, authorizeURLInitializer
+                    "The previous authorize url initializer has been replaced. platform: {}," +
+                            " identifier: {}, current.hash: {}, previous.hash: {}",
+                    platform, identifier, authorizeURLInitializer.hashCode(), previous.hashCode()
             );
         }
         return previous;
@@ -217,13 +232,14 @@ public final class OAuth2Client {
         E previous = (E) exchangerGroupByIdentifier.put(identifier, exchanger);
         if (previous == null) {
             log.info(
-                    "An exchanger has been successfully registered. platform: {}, identifier: {}",
-                    platform, identifier
+                    "An exchanger has been registered. hash: {}, platform: {}, identifier: {}",
+                    exchanger.hashCode(), platform, identifier
             );
         } else {
             log.warn(
-                    "The previous exchanger has been replaced. platform: {}, identifier: {}, previous: {}, current: {}",
-                    platform, identifier, previous, exchanger
+                    "The previous exchanger has been replaced. platform: {}, identifier: {}," +
+                            " current.hash: {}, previous.hash: {}",
+                    platform, identifier, exchanger.hashCode(), previous.hashCode()
             );
         }
         return previous;

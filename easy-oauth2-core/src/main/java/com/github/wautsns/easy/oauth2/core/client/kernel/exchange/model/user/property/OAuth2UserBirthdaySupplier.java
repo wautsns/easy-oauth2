@@ -16,6 +16,7 @@
 package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.property;
 
 import org.jetbrains.annotations.Nullable;
+
 import java.time.LocalDate;
 
 /**

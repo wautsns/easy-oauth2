@@ -17,13 +17,17 @@ package com.github.wautsns.easy.oauth2.core.request.model.request.builtin.entity
 
 import com.github.wautsns.easy.oauth2.core.request.model.request.AbstractOAuth2RequestEntity;
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * OAuth2 request url encoded form entity.
@@ -33,10 +37,10 @@ import java.util.Map;
  */
 public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2RequestEntity {
 
-    /** Estimated number of parameter names. */
-    private final int estimatedNumberOfParameterNames;
-    /** Raw url encoded form. */
-    private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> raw;
+    /** Estimated number of names. */
+    private final int estimatedNumberOfNames;
+    /** Delegate. */
+    private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> delegate;
 
     // ##################################################################################
     // #################### enhanced getter #############################################
@@ -47,31 +51,35 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
         return "application/x-www-form-urlencoded";
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public byte @NotNull [] bytes() {
-        if (raw.isEmpty()) { return new byte[0]; }
-        StringBuilder content = new StringBuilder();
-        for (Map.Entry<String, Object> entry : raw.entrySet()) {
+    public @NotNull String writeAsText() {
+        if (delegate.isEmpty()) { return ""; }
+        StringBuilder text = new StringBuilder();
+        for (Map.Entry<String, Object> entry : delegate.entrySet()) {
             String name = entry.getKey();
             Object temporary = entry.getValue();
             if (temporary instanceof String) {
-                content.append(name).append('=').append(temporary).append('&');
+                text.append(name).append('=').append(temporary).append('&');
             } else if (temporary == null) {
-                content.append(name).append('&');
+                text.append(name).append('&');
             } else {
                 List<String> values = (List<String>) temporary;
                 if (values.isEmpty()) { continue; }
                 for (String value : values) {
-                    content.append(name);
+                    text.append(name);
                     if (value != null) {
-                        content.append('=').append(value).append('&');
+                        text.append('=').append(value).append('&');
                     }
                 }
             }
         }
-        content.deleteCharAt(content.length() - 1);
-        return content.toString().getBytes(StandardCharsets.UTF_8);
+        text.deleteCharAt(text.length() - 1);
+        return text.toString();
+    }
+
+    @Override
+    public byte @NotNull [] writeAsBytes() {
+        return writeAsText().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -84,74 +92,85 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
     // ##################################################################################
 
     /**
-     * Add a parameter which the name is unique.
+     * Add unique form item.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The parameter will only appear once in the text.</li>
-     * <li>If the {@code value} is {@code null}, the parameter in text is like {@code "key1&key2"}.</li>
+     * <li>If the {@code value} is {@code null}, form text will be {@code "name&name2=123"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param value parameter value
+     * @param name form item name
+     * @param value form item value
      * @return self reference
      */
-    public @NotNull OAuth2RequestURLEncodedFormEntity unique(@NotNull String name, @Nullable String value) {
-        raw.put(name, OAuth2DataUtils.encodeWithURLEncoder(value));
+    public @NotNull OAuth2RequestURLEncodedFormEntity unique(
+            @NotNull String name, @Nullable String value) {
+        delegate.put(name, OAuth2DataUtils.encodeWithURLEncoder(value));
         return this;
     }
 
     /**
-     * Add a parameter which the name is repeatable.
+     * Add repeatable form item.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the parameter of the {@code name} is added more than once, the parameter will also appear in the text for
-     * the corresponding number of times. And the text is like {@code "key=value1&key=value2"}.</li>
-     * <li>If the {@code value} is {@code null}, the parameter in text is like {@code "key1&key2"}.</li>
+     * <li>If the {@code value} is {@code null}, form text will be {@code "name&name2=123"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param value parameter value
+     * @param name form item name
+     * @param value form item value
      * @return self reference
      */
     @SuppressWarnings("unchecked")
-    public @NotNull OAuth2RequestURLEncodedFormEntity repeatable(@NotNull String name, @Nullable String value) {
-        value = OAuth2DataUtils.encodeWithURLEncoder(value);
-        Object temporary = raw.get(name);
+    public @NotNull OAuth2RequestURLEncodedFormEntity repeatable(
+            @NotNull String name, @Nullable String value) {
+        String urlEncodedValue = OAuth2DataUtils.encodeWithURLEncoder(value);
+        Object temporary = delegate.get(name);
         if (temporary == null) {
-            raw.put(name, value);
+            delegate.put(name, urlEncodedValue);
         } else if (temporary instanceof List) {
-            ((List<String>) temporary).add(value);
+            ((List<String>) temporary).add(urlEncodedValue);
         } else {
             List<String> values = new LinkedList<>();
             values.add((String) temporary);
-            values.add(value);
-            raw.put(name, values);
+            values.add(urlEncodedValue);
+            delegate.put(name, values);
         }
         return this;
     }
 
     /**
-     * Add parameters which the name is repeatable.
+     * Add repeatable form items.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code values} is {@code null}, the operation will be ignored.</li>
+     * <li>If value is {@code null}, form text will be {@code "name&name2=123"}.</li>
+     * <li>Value will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param values parameter values
+     * @param name form item name
+     * @param values form item values
      * @return self reference
      * @see #repeatable(String, String)
      */
+    @SuppressWarnings("unchecked")
     public @NotNull OAuth2RequestURLEncodedFormEntity repeatable(
             @NotNull String name, @Nullable Iterable<@Nullable String> values) {
         if (values == null) { return this; }
-        for (String value : values) {
-            repeatable(name, value);
+        LinkedList<String> urlEncodedValues = StreamSupport.stream(values.spliterator(), false)
+                .map(OAuth2DataUtils::encodeWithURLEncoder)
+                .collect(Collectors.toCollection(LinkedList::new));
+        Object temporary = delegate.get(name);
+        if (temporary == null) {
+            delegate.put(name, urlEncodedValues);
+        } else if (temporary instanceof List) {
+            ((List<String>) temporary).addAll(urlEncodedValues);
+        } else {
+            urlEncodedValues.addFirst((String) temporary);
+            delegate.put(name, urlEncodedValues);
         }
         return this;
     }
@@ -163,11 +182,11 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
     /**
      * Construct an instance.
      *
-     * @param estimatedNumberOfParameterNames estimated number of parameter names
+     * @param estimatedNumberOfNames {@link #estimatedNumberOfNames}
      */
-    public OAuth2RequestURLEncodedFormEntity(int estimatedNumberOfParameterNames) {
-        this.estimatedNumberOfParameterNames = estimatedNumberOfParameterNames;
-        this.raw = new LinkedHashMap<>(estimatedNumberOfParameterNames, 1F);
+    public OAuth2RequestURLEncodedFormEntity(int estimatedNumberOfNames) {
+        this.estimatedNumberOfNames = estimatedNumberOfNames;
+        this.delegate = new LinkedHashMap<>(estimatedNumberOfNames, 1F);
     }
 
     /**
@@ -177,13 +196,16 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
      * @see #copy()
      */
     @SuppressWarnings("unchecked")
-    protected OAuth2RequestURLEncodedFormEntity(@NotNull OAuth2RequestURLEncodedFormEntity template) {
-        this.estimatedNumberOfParameterNames = template.estimatedNumberOfParameterNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
-        for (Map.Entry<String, Object> entry : template.raw.entrySet()) {
+    protected OAuth2RequestURLEncodedFormEntity(
+            @NotNull OAuth2RequestURLEncodedFormEntity template) {
+        this.estimatedNumberOfNames = template.estimatedNumberOfNames;
+        this.delegate = new LinkedHashMap<>(this.estimatedNumberOfNames, 1F);
+        for (Map.Entry<String, Object> entry : template.delegate.entrySet()) {
             Object value = entry.getValue();
-            if (value instanceof List) { value = new LinkedList<>((List<String>) value); }
-            this.raw.put(entry.getKey(), value);
+            if (value instanceof List) {
+                value = new LinkedList<>((List<String>) value);
+            }
+            this.delegate.put(entry.getKey(), value);
         }
     }
 
@@ -193,7 +215,9 @@ public final class OAuth2RequestURLEncodedFormEntity extends AbstractOAuth2Reque
 
     @Override
     public @NotNull String toString() {
-        return raw.toString();
+        return "{contentType=" + contentType() +
+                ", delegate=" + delegate +
+                '}';
     }
 
 }

@@ -18,8 +18,10 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuratio
 import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSupplier;
 import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.AbstractOAuth2AuthorizeURLInitializer;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -34,8 +36,8 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
         implements OAuth2PlatformSupplier {
 
     /**
-     * Identifier that is used to distinguish between different functional {@link AbstractOAuth2AuthorizeURLInitializer
-     * authorizeURLInitializer} in the same platform (repeatable between different platforms).
+     * Identifier that is used to distinguish between different functional {@link
+     * AbstractOAuth2AuthorizeURLInitializer authorizeURLInitializer} in the same platform.
      */
     private final @NotNull String identifier;
     /** Application properties. */
@@ -55,14 +57,7 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
     /**
      * Return identifier.
      *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The identifier is used to distinguish between different functional {@link
-     * AbstractOAuth2AuthorizeURLInitializer authorizeURLInitializer} in the same platform.</li>
-     * <li>The identifier is repeatable between different platforms.</li>
-     * </ul>
-     *
-     * @return identifier
+     * @return {@link #identifier}
      */
     public @NotNull String identifier() {
         return identifier;
@@ -71,7 +66,7 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
     /**
      * Return application properties.
      *
-     * @return application properties
+     * @return {@link #applicationProperties}
      */
     public @NotNull A applicationProperties() {
         return applicationProperties;
@@ -80,7 +75,7 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
     /**
      * Return authorization properties.
      *
-     * @return authorization properties
+     * @return {@link #authorizationProperties}
      */
     public @NotNull O authorizationProperties() {
         return authorizationProperties;
@@ -97,13 +92,15 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>The constructor equals to {@link
      * #OAuth2AuthorizeURLInitializerMetadata(String, AbstractOAuth2ApplicationProperties, AbstractOAuth2AuthorizationProperties)
-     * new OAuth2AuthorizeURLInitializerMetadata(null, applicationProperties, authorizationProperties)}.</li>
+     * new OAuth2AuthorizeURLInitializerMetadata}({@code null}, {@code applicationProperties},
+     * {@code authorizationProperties}).</li>
      * </ul>
      *
-     * @param applicationProperties application properties
-     * @param authorizationProperties authorization properties
+     * @param applicationProperties {@link #applicationProperties}
+     * @param authorizationProperties {@link #authorizationProperties}
      */
-    public OAuth2AuthorizeURLInitializerMetadata(@NotNull A applicationProperties, @NotNull O authorizationProperties) {
+    public OAuth2AuthorizeURLInitializerMetadata(
+            @NotNull A applicationProperties, @NotNull O authorizationProperties) {
         this(null, applicationProperties, authorizationProperties);
     }
 
@@ -113,30 +110,30 @@ public final class OAuth2AuthorizeURLInitializerMetadata<A extends AbstractOAuth
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code identifier} is {@code null}, it will be initialized as platform.</li>
-     * <li>The {@code applicationProperties} and {@code authorizationProperties} must be suitable for the same platform,
-     * and they will be automatically validated through method {@code validate()}.</li>
+     * <li>The {@code applicationProperties} and {@code authorizationProperties} must be suitable
+     * for the same platform, and they will be automatically validated through method {@code
+     * validate()}.</li>
      * </ul>
      *
-     * @param identifier identifier, for more details see {@link #identifier()}
-     * @param applicationProperties application properties
-     * @param authorizationProperties authorization properties
+     * @param identifier {@link #identifier}
+     * @param applicationProperties {@link #applicationProperties}
+     * @param authorizationProperties {@link #authorizationProperties}
      */
     public OAuth2AuthorizeURLInitializerMetadata(
-            @Nullable String identifier, @NotNull A applicationProperties, @NotNull O authorizationProperties) {
+            @Nullable String identifier, @NotNull A applicationProperties,
+            @NotNull O authorizationProperties) {
         this.identifier = (identifier != null) ? identifier : applicationProperties.platform();
         this.applicationProperties = Objects.requireNonNull(applicationProperties);
         this.authorizationProperties = Objects.requireNonNull(authorizationProperties);
         Objects.requireNonNull(applicationProperties.platform());
         Objects.requireNonNull(authorizationProperties.platform());
         if (!applicationProperties.platform().equals(authorizationProperties.platform())) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Application properties and authorization properties must be suitable for the same" +
-                                    " platform. identifier: `%s`, application.platform: `%s`," +
-                                    " authorization.platform: `%s`",
-                            identifier, applicationProperties.platform(), authorizationProperties.platform()
-                    )
-            );
+            throw new IllegalArgumentException(String.format(
+                    "Application properties and authorization properties must be suitable for the" +
+                            " same platform. identifier: `%s`, application.platform: `%s`," +
+                            " authorization.platform: `%s`",
+                    identifier, applicationProperties.platform(), authorizationProperties.platform()
+            ));
         }
         this.applicationProperties.validate();
         this.authorizationProperties.validate();

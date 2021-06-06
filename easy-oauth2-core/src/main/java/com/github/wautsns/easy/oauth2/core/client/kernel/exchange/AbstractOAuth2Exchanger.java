@@ -23,9 +23,11 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.O
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.OAuth2CallbackQuery;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 /**
@@ -46,7 +48,7 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
 
     // ##################################################################################
 
-    /** Metadata of {@code this} exchanger. */
+    /** Metadata. */
     protected final @NotNull OAuth2ExchangerMetadata<A> metadata;
 
     /** OAuth2 api: exchange callback query for user identifier. */
@@ -66,7 +68,7 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
     /**
      * Return identifier.
      *
-     * @return identifier, for more details see {@link OAuth2ExchangerMetadata#identifier()}
+     * @return {@link OAuth2ExchangerMetadata#identifier() identifier}
      */
     public final @NotNull String identifier() {
         return metadata.identifier();
@@ -77,33 +79,46 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
     // ##################################################################################
 
     @Override
-    public final @NotNull String exchangeForUserIdentifier(@NotNull OAuth2CallbackQuery query) throws OAuth2Exception {
-        log.debug("Ready to exchange callback query for user identifier. callbackQuery: {}", query.raw());
+    public final @NotNull String exchangeForUserIdentifier(@NotNull OAuth2CallbackQuery query)
+            throws OAuth2Exception {
+        log.debug(
+                "Ready to exchange callback query for user identifier. callbackQuery: {}",
+                query.raw()
+        );
         try {
-            String userIdentifier = exchangeCallbackQueryForUserIdentifier.exchangeForUserIdentifier(query);
+            String userIdentifier =
+                    exchangeCallbackQueryForUserIdentifier.exchangeForUserIdentifier(query);
             log.debug(
-                    "User identifier has been exchanged with callback query. callbackQuery: {}, userIdentifier: {}",
-                    query.raw(), userIdentifier
+                    "User identifier has been exchanged with callback query. userIdentifier: {}," +
+                            " callbackQuery: {}",
+                    userIdentifier, query.raw()
             );
             return userIdentifier;
         } catch (RuntimeException | OAuth2Exception e) {
-            log.error("Failed to exchange callback query for user identifier. callbackQuery: {}", query.raw(), e);
+            log.error(
+                    "Failed to exchange callback query for user identifier. callbackQuery: {}",
+                    query.raw(), e
+            );
             throw e;
         }
     }
 
     @Override
-    public final @NotNull U exchangeForUser(@NotNull OAuth2CallbackQuery query) throws OAuth2Exception {
+    public final @NotNull U exchangeForUser(@NotNull OAuth2CallbackQuery query)
+            throws OAuth2Exception {
         log.debug("Ready to exchange callback query for user. callbackQuery: {}", query.raw());
         try {
             U user = exchangeCallbackQueryForUser.exchangeForUser(query);
             log.debug(
-                    "User has been exchanged with callback query. callbackQuery: {}, user: {}",
-                    query.raw(), user.raw()
+                    "User has been exchanged with callback query. user: {}, callbackQuery: {}",
+                    user.raw(), query.raw()
             );
             return user;
         } catch (RuntimeException | OAuth2Exception e) {
-            log.error("Failed to exchange callback query for user. callbackQuery: {}", query.raw(), e);
+            log.error(
+                    "Failed to exchange callback query for user. callbackQuery: {}",
+                    query.raw(), e
+            );
             throw e;
         }
     }
@@ -115,14 +130,14 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
     /**
      * Construct an instance.
      *
-     * @param metadata metadata
+     * @param metadata {@link #metadata}
      */
     protected AbstractOAuth2Exchanger(@NotNull OAuth2ExchangerMetadata<A> metadata) {
         this.metadata = Objects.requireNonNull(metadata);
-        this.exchangeCallbackQueryForUserIdentifier = Objects.requireNonNull(
-                initializeAPIExchangeCallbackQueryForUserIdentifier()
-        );
-        this.exchangeCallbackQueryForUser = Objects.requireNonNull(initializeAPIExchangeCallbackQueryForUser());
+        this.exchangeCallbackQueryForUserIdentifier =
+                Objects.requireNonNull(initializeAPIExchangeCallbackQueryForUserIdentifier());
+        this.exchangeCallbackQueryForUser =
+                Objects.requireNonNull(initializeAPIExchangeCallbackQueryForUser());
     }
 
     // ##################################################################################
@@ -133,6 +148,7 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
      * Initialize oauth2 api: exchange callback query for user identifier.
      *
      * @return oauth2 api: exchange callback query for user identifier
+     * @see #exchangeForUserIdentifier(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForUserIdentifier initializeAPIExchangeCallbackQueryForUserIdentifier();
 
@@ -140,6 +156,7 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
      * Initialize oauth2 api: exchange callback query for user.
      *
      * @return oauth2 api: exchange callback query for user
+     * @see #exchangeForUser(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForUser<U> initializeAPIExchangeCallbackQueryForUser();
 

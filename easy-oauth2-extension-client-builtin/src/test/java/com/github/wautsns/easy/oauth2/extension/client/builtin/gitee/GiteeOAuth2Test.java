@@ -21,7 +21,9 @@ import com.github.wautsns.easy.oauth2.extension.client.AbstractOAuth2Test;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2Permission;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 /**
@@ -35,14 +37,15 @@ public class GiteeOAuth2Test extends AbstractOAuth2Test {
 
     @Override
     protected @NotNull String authorizeCode() {
-        return "803afa86129a567137bc1399eafc9351a12fd8df0538a3ea3465125913e1d075";
+        return "07c2dda4990f30b07c3b3e369bc09df79fbf415005871eb28db4d9fdc0bb47e5";
     }
 
     // ##################################################################################
 
     @Override
     protected @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
-            @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback) {
+            @NotNull String clientId, @NotNull String clientSecret,
+            @NotNull String authorizeCallback) {
         return new GiteeOAuth2ApplicationProperties()
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)

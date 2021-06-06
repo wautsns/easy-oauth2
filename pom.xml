@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,7 +10,9 @@
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>Easily obtain authorization and user resources from the open platform through OAuth2.</description>
+    <description>
+        Easily obtain authorization and user resources from the open platform through OAuth2.
+    </description>
     <url>https://github.com/wautsns/easy-oauth2</url>
 
     <licenses>
@@ -60,6 +63,7 @@
         <fasterxml.jacskon.version>2.10.5.1</fasterxml.jacskon.version>
         <jetbrains.annotations.version>20.1.0</jetbrains.annotations.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <logback.version>1.2.3</logback.version>
 
         <!-- Versions of test dependencies. -->
         <junit.version>4.12</junit.version>
@@ -74,7 +78,7 @@
         <maven.jar.version>3.1.0</maven.jar.version>
         <maven.source.version>3.0.1</maven.source.version>
         <maven.javadoc.version>3.0.1</maven.javadoc.version>
-        <maven.gpg.version>1.6</maven.gpg.version>
+        <maven.gpg.version>3.0.1</maven.gpg.version>
         <maven.deploy.version>2.8.2</maven.deploy.version>
     </properties>
 
@@ -163,15 +167,29 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -188,9 +206,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.version}</version>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -221,18 +236,25 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven.javadoc.version}</version>
+                    <configuration>
+                        <locale>en_US</locale>
+                        <encoding>UTF-8</encoding>
+                        <charset>UTF-8</charset>
+                        <show>private</show>
+                        <tags>
+                            <tag>
+                                <name>implNote</name>
+                                <placement>a</placement>
+                                <head>Implementation Note:</head>
+                            </tag>
+                        </tags>
+                    </configuration>
                     <executions>
                         <execution>
                             <phase>package</phase>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
-                            <configuration>
-                                <locale>en_US</locale>
-                                <encoding>UTF-8</encoding>
-                                <charset>UTF-8</charset>
-                                <doclint>none</doclint>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

@@ -15,17 +15,18 @@
  */
 package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSupplier;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract oauth2 user.
  *
  * @author wautsns
- * @implNote Typically, an oauth2 user contains {@code identifier} and other properties. However, these
- *         properties may vary greatly from platform to platform, so for ease of understanding, they are obtained from
- *         the {@code raw} by the implementation class.
+ * @implNote Typically, an oauth2 user contains {@code identifier} and other properties.
+ *         However, these properties may vary greatly from platform to platform, so for ease of
+ *         understanding, they are obtained from the {@code raw} by the implementation class.
  * @since Mar 31, 2021
  */
 public abstract class AbstractOAuth2User implements OAuth2PlatformSupplier {
@@ -40,7 +41,7 @@ public abstract class AbstractOAuth2User implements OAuth2PlatformSupplier {
     /**
      * Return raw user.
      *
-     * @return raw user
+     * @return {@link #raw}
      */
     public final @NotNull JsonNode raw() {
         return raw;
@@ -62,7 +63,7 @@ public abstract class AbstractOAuth2User implements OAuth2PlatformSupplier {
     /**
      * Construct an instance.
      *
-     * @param raw raw user
+     * @param raw {@link #raw}
      */
     protected AbstractOAuth2User(@NotNull JsonNode raw) {
         this.raw = raw;

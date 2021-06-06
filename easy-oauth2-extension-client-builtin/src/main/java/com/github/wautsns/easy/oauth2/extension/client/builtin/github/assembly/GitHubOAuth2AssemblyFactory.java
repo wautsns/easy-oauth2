@@ -23,6 +23,7 @@ import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configurat
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.configuration.GitHubOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.authorize.GitHubOAuth2AuthorizeURLInitializer;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.github.kernel.exchange.GitHubOAuth2Exchanger;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +32,8 @@ import org.jetbrains.annotations.NotNull;
  * @author wautsns
  * @since May 14, 2021
  */
-public final class GitHubOAuth2AssemblyFactory implements OAuth2PlatformAssemblyFactory<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties, GitHubOAuth2AuthorizeURLInitializer, GitHubOAuth2Exchanger> {
+public final class GitHubOAuth2AssemblyFactory
+        implements OAuth2PlatformAssemblyFactory<GitHubOAuth2ApplicationProperties, GitHubOAuth2AuthorizationProperties, GitHubOAuth2AuthorizeURLInitializer, GitHubOAuth2Exchanger> {
 
     // ##################################################################################
     // #################### enhanced getter #############################################

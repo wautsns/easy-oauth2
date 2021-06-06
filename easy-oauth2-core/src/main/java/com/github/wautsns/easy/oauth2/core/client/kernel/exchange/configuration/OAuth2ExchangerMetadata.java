@@ -20,8 +20,10 @@ import com.github.wautsns.easy.oauth2.core.client.configuration.OAuth2PlatformSu
 import com.github.wautsns.easy.oauth2.core.request.executor.AbstractOAuth2RequestExecutor;
 import com.github.wautsns.easy.oauth2.core.request.executor.OAuth2RequestExecutorFactory;
 import com.github.wautsns.easy.oauth2.core.request.executor.OAuth2RequestExecutorFactoryManager;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -35,8 +37,9 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
         implements OAuth2PlatformSupplier {
 
     /**
-     * Identifier that is used to distinguish between different {@link AbstractOAuth2ApplicationProperties
-     * applicationProperties} in the same platform (repeatable between different platforms).
+     * Identifier that is used to distinguish between different {@link
+     * AbstractOAuth2ApplicationProperties applicationProperties} in the same platform (repeatable
+     * between different platforms).
      */
     private final @NotNull String identifier;
     /** Application properties. */
@@ -56,14 +59,7 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
     /**
      * Return identifier.
      *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The identifier is used to distinguish between different {@link AbstractOAuth2ApplicationProperties
-     * applicationProperties} in the same platform.</li>
-     * <li>The identifier is repeatable between different platforms.</li>
-     * </ul>
-     *
-     * @return identifier
+     * @return {@link #identifier}
      */
     public @NotNull String identifier() {
         return identifier;
@@ -72,7 +68,7 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
     /**
      * Return application properties.
      *
-     * @return application properties
+     * @return {@link #applicationProperties}
      */
     public @NotNull A applicationProperties() {
         return applicationProperties;
@@ -81,7 +77,7 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
     /**
      * Return request executor.
      *
-     * @return request executor
+     * @return {@link #requestExecutor}
      */
     public @NotNull AbstractOAuth2RequestExecutor<?> requestExecutor() {
         return requestExecutor;
@@ -98,14 +94,16 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>The constructor equals to {@link
      * #OAuth2ExchangerMetadata(String, AbstractOAuth2ApplicationProperties, AbstractOAuth2RequestExecutor)
-     * new OAuth2ExchangerMetadata(null, applicationProperties, requestExecutor)}.</li>
+     * new OAuth2ExchangerMetadata}({@code null}, {@code applicationProperties}, {@code
+     * requestExecutor}).</li>
      * </ul>
      *
-     * @param applicationProperties application properties
-     * @param requestExecutor request executor
+     * @param applicationProperties {@link #applicationProperties}
+     * @param requestExecutor {@link #requestExecutor}
      */
     public OAuth2ExchangerMetadata(
-            @NotNull A applicationProperties, @Nullable AbstractOAuth2RequestExecutor<?> requestExecutor) {
+            @NotNull A applicationProperties,
+            @Nullable AbstractOAuth2RequestExecutor<?> requestExecutor) {
         this(null, applicationProperties, requestExecutor);
     }
 
@@ -116,24 +114,27 @@ public final class OAuth2ExchangerMetadata<A extends AbstractOAuth2ApplicationPr
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code identifier} is {@code null}, it will be initialized as platform.</li>
      * <li>If the {@code requestExecutor} is {@code null}, it will be initialized as {@link
-     * OAuth2RequestExecutorFactoryManager#instance()}{@link OAuth2RequestExecutorFactory#create() .create()}.</li>
-     * <li>The {@code applicationProperties} will be automatically validated through method {@code validate()}.</li>
+     * OAuth2RequestExecutorFactoryManager#factory()}{@link
+     * OAuth2RequestExecutorFactory#create() .create()}.</li>
+     * <li>The {@code applicationProperties} will be automatically validated through method {@code
+     * validate()}.</li>
      * </ul>
      *
-     * @param applicationProperties application properties
-     * @param requestExecutor request executor
+     * @param identifier {@link #identifier}
+     * @param applicationProperties {@link #applicationProperties}
+     * @param requestExecutor {@link #requestExecutor}
      */
     public OAuth2ExchangerMetadata(
             @Nullable String identifier, @NotNull A applicationProperties,
             @Nullable AbstractOAuth2RequestExecutor<?> requestExecutor) {
         this.identifier = (identifier != null) ? identifier : applicationProperties.platform();
         this.applicationProperties = Objects.requireNonNull(applicationProperties);
+        this.applicationProperties.validate();
         if (requestExecutor != null) {
             this.requestExecutor = requestExecutor;
         } else {
-            this.requestExecutor = OAuth2RequestExecutorFactoryManager.instance().create();
+            this.requestExecutor = OAuth2RequestExecutorFactoryManager.factory().create();
         }
-        this.applicationProperties.validate();
     }
 
 }

@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient;
+package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.model;
 
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2IOException;
 import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2Response;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -30,16 +32,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * OAuth2 response based on apache httpclient.
+ * Apache httpclient oauth2 response.
  *
  * @author wautsns
  * @since Mar 30, 2021
  */
-public final class OAuth2ResponseBasedOnApacheHttpclient extends AbstractOAuth2Response {
+public final class ApacheHttpclientOAuth2Response extends AbstractOAuth2Response {
 
-    /** Raw http response. */
+    /** Raw response. */
     private final @NotNull HttpResponse raw;
 
+    // ##################################################################################
+    // #################### enhanced getter #############################################
     // ##################################################################################
 
     @Override
@@ -83,9 +87,9 @@ public final class OAuth2ResponseBasedOnApacheHttpclient extends AbstractOAuth2R
     /**
      * Construct an instance.
      *
-     * @param raw raw http response
+     * @param raw {@link #raw}
      */
-    public OAuth2ResponseBasedOnApacheHttpclient(@NotNull HttpResponse raw) {
+    public ApacheHttpclientOAuth2Response(@NotNull HttpResponse raw) {
         this.raw = Objects.requireNonNull(raw);
     }
 

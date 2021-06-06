@@ -31,11 +31,12 @@ public interface OAuth2PlatformSupplier {
     // ##################################################################################
 
     /**
-     * Return platform text like {@code "github"}, etc.
+     * Return platform identifier like {@code "github"}, etc.
      *
-     * @return platform text
-     * @implNote Usually, the platform text can be extracted from the domain name. For example, {@code "github"}
-     *         is extracted from <a href="https://github.com/">https://github.com/</a>
+     * @return platform identifier
+     * @implNote Usually, the platform identifier is extracted from the domain name. For
+     *         example, {@code "github"} is extracted from <a href="https://github.com/">
+     *         https://github.com/</a>.
      */
     @NotNull String platform();
 

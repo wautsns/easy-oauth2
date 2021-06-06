@@ -15,9 +15,8 @@
  */
 package com.github.wautsns.easy.oauth2.core.request.executor.configuration;
 
-import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,13 +33,15 @@ public final class OAuth2RequestExecutorProperties {
      * Default request executor properties.
      *
      * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
+     * <li style="list-style-type:none">########## Default Properties  ###############</li>
      * <li>connectTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT2S")}</li>
      * <li>socketTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT5S")}</li>
      * <li>maxConcurrentRequests: {@code 64}</li>
      * <li>maxIdleTime: {@link Duration#parse(CharSequence) Duration.parse("PT5M")}</li>
      * <li>keepAliveTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT3M")}</li>
      * <li>retryTimes: {@code 1}</li>
+     * <li>proxy: {@code null}</li>
+     * <li>custom: {@code null}</li>
      * </ul>
      */
     public static final @NotNull OAuth2RequestExecutorProperties DEFAULT =
@@ -50,26 +51,28 @@ public final class OAuth2RequestExecutorProperties {
                     .setMaxConcurrentRequests(64)
                     .setMaxIdleTime(Duration.parse("PT5M"))
                     .setKeepAliveTimeout(Duration.parse("PT3M"))
-                    .setRetryTimes(1);
+                    .setRetryTimes(1)
+                    .setProxy(null)
+                    .setCustom(null);
 
     // ##################################################################################
 
     /** Connect timeout. */
-    private @Nullable Duration connectTimeout;
+    private Duration connectTimeout;
     /** Socket timeout. */
-    private @Nullable Duration socketTimeout;
+    private Duration socketTimeout;
     /** Max concurrent requests. */
-    private @Nullable Integer maxConcurrentRequests;
+    private Integer maxConcurrentRequests;
     /** Max idle time of connection. */
-    private @Nullable Duration maxIdleTime;
+    private Duration maxIdleTime;
     /** Keep alive timeout of connection. */
-    private @Nullable Duration keepAliveTimeout;
+    private Duration keepAliveTimeout;
     /** Retry times. */
-    private @Nullable Integer retryTimes;
+    private Integer retryTimes;
     /** Proxy. */
-    private @Nullable String proxy;
+    private String proxy;
     /** Custom properties. */
-    private @Nullable Map<@NotNull String, @Nullable String> custom;
+    private Map<String, String> custom;
 
     // ##################################################################################
     // #################### enhanced setter #############################################
@@ -80,21 +83,37 @@ public final class OAuth2RequestExecutorProperties {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>Even after the method is executed, there is no guarantee that properties is certainly non-null (dependent on
-     * {@link #DEFAULT}).</li>
+     * <li>Even after the method is executed, there is no guarantee that properties is certainly
+     * non-null (dependent on {@link #DEFAULT}).</li>
      * </ul>
      *
      * @return self reference
      */
     public @NotNull OAuth2RequestExecutorProperties rewriteNullToDefaultValue() {
-        if (connectTimeout == null) { connectTimeout = DEFAULT.connectTimeout; }
-        if (socketTimeout == null) { socketTimeout = DEFAULT.socketTimeout; }
-        if (maxConcurrentRequests == null) { maxConcurrentRequests = DEFAULT.maxConcurrentRequests; }
-        if (maxIdleTime == null) { maxIdleTime = DEFAULT.maxIdleTime; }
-        if (keepAliveTimeout == null) { keepAliveTimeout = DEFAULT.keepAliveTimeout; }
-        if (retryTimes == null) { retryTimes = DEFAULT.retryTimes; }
-        if (proxy == null) { proxy = DEFAULT.proxy; }
-        if ((custom == null) && (DEFAULT.custom != null)) { custom = new HashMap<>(DEFAULT.custom); }
+        if (connectTimeout == null) {
+            connectTimeout = DEFAULT.connectTimeout;
+        }
+        if (socketTimeout == null) {
+            socketTimeout = DEFAULT.socketTimeout;
+        }
+        if (maxConcurrentRequests == null) {
+            maxConcurrentRequests = DEFAULT.maxConcurrentRequests;
+        }
+        if (maxIdleTime == null) {
+            maxIdleTime = DEFAULT.maxIdleTime;
+        }
+        if (keepAliveTimeout == null) {
+            keepAliveTimeout = DEFAULT.keepAliveTimeout;
+        }
+        if (retryTimes == null) {
+            retryTimes = DEFAULT.retryTimes;
+        }
+        if (proxy == null) {
+            proxy = DEFAULT.proxy;
+        }
+        if ((custom == null) && (DEFAULT.custom != null)) {
+            custom = new HashMap<>(DEFAULT.custom);
+        }
         return this;
     }
 
@@ -104,81 +123,90 @@ public final class OAuth2RequestExecutorProperties {
 
     @Override
     public @NotNull String toString() {
-        return OAuth2DataUtils.convertObjectToJSON(this);
+        return "{connectTimeout=" + connectTimeout +
+                ", socketTimeout=" + socketTimeout +
+                ", maxConcurrentRequests=" + maxConcurrentRequests +
+                ", maxIdleTime=" + maxIdleTime +
+                ", keepAliveTimeout=" + keepAliveTimeout +
+                ", retryTimes=" + retryTimes +
+                ", proxy=" + proxy +
+                ", custom=" + custom +
+                '}';
     }
 
     // ##################################################################################
     // #################### getter / setter #############################################
     // ##################################################################################
 
-    public @Nullable Duration getConnectTimeout() {
+    public Duration getConnectTimeout() {
         return connectTimeout;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setConnectTimeout(@Nullable Duration connectTimeout) {
+    public @NotNull OAuth2RequestExecutorProperties setConnectTimeout(Duration connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
-    public @Nullable Duration getSocketTimeout() {
+    public Duration getSocketTimeout() {
         return socketTimeout;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setSocketTimeout(@Nullable Duration socketTimeout) {
+    public @NotNull OAuth2RequestExecutorProperties setSocketTimeout(Duration socketTimeout) {
         this.socketTimeout = socketTimeout;
         return this;
     }
 
-    public @Nullable Integer getMaxConcurrentRequests() {
+    public Integer getMaxConcurrentRequests() {
         return maxConcurrentRequests;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setMaxConcurrentRequests(@Nullable Integer maxConcurrentRequests) {
+    public @NotNull OAuth2RequestExecutorProperties setMaxConcurrentRequests(
+            Integer maxConcurrentRequests) {
         this.maxConcurrentRequests = maxConcurrentRequests;
         return this;
     }
 
-    public @Nullable Duration getMaxIdleTime() {
+    public Duration getMaxIdleTime() {
         return maxIdleTime;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setMaxIdleTime(@Nullable Duration maxIdleTime) {
+    public @NotNull OAuth2RequestExecutorProperties setMaxIdleTime(Duration maxIdleTime) {
         this.maxIdleTime = maxIdleTime;
         return this;
     }
 
-    public @Nullable Duration getKeepAliveTimeout() {
+    public Duration getKeepAliveTimeout() {
         return keepAliveTimeout;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setKeepAliveTimeout(@Nullable Duration keepAliveTimeout) {
+    public @NotNull OAuth2RequestExecutorProperties setKeepAliveTimeout(Duration keepAliveTimeout) {
         this.keepAliveTimeout = keepAliveTimeout;
         return this;
     }
 
-    public @Nullable Integer getRetryTimes() {
+    public Integer getRetryTimes() {
         return retryTimes;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setRetryTimes(@Nullable Integer retryTimes) {
+    public @NotNull OAuth2RequestExecutorProperties setRetryTimes(Integer retryTimes) {
         this.retryTimes = retryTimes;
         return this;
     }
 
-    public @Nullable String getProxy() {
+    public String getProxy() {
         return proxy;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setProxy(@Nullable String proxy) {
+    public @NotNull OAuth2RequestExecutorProperties setProxy(String proxy) {
         this.proxy = proxy;
         return this;
     }
 
-    public @Nullable Map<@NotNull String, @Nullable String> getCustom() {
+    public Map<@NotNull String, String> getCustom() {
         return custom;
     }
 
-    public @NotNull OAuth2RequestExecutorProperties setCustom(@Nullable Map<@NotNull String, @Nullable String> custom) {
+    public @NotNull OAuth2RequestExecutorProperties setCustom(Map<String, String> custom) {
         this.custom = custom;
         return this;
     }

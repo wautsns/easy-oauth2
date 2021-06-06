@@ -16,6 +16,7 @@
 package com.github.wautsns.easy.oauth2.core.exception.specific;
 
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.Nullable;
 
 /**

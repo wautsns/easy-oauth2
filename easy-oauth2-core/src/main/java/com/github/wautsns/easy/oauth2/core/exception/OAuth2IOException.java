@@ -16,6 +16,7 @@
 package com.github.wautsns.easy.oauth2.core.exception;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Objects;
 

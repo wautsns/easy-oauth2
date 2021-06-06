@@ -17,7 +17,9 @@ package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configurat
 
 import com.github.wautsns.easy.oauth2.core.client.configuration.AbstractOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +35,10 @@ public final class GiteeOAuth2ApplicationProperties extends AbstractOAuth2Applic
     private String clientId;
     /** The client secret you received from gitee for your oauth app. */
     private String clientSecret;
-    /** Your application’s callback urls (gitee allows multiple callbacks, but only the last one is active). */
+    /**
+     * Your application’s callback urls (gitee allows multiple callbacks, but only the last one is
+     * active).
+     */
     private List<String> callbacks;
 
     // ##################################################################################

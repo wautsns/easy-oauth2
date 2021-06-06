@@ -18,6 +18,7 @@ package com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.AbstractOAuth2Token;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

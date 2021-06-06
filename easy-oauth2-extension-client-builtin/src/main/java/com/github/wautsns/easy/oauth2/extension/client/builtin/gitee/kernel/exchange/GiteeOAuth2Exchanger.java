@@ -15,7 +15,6 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.AbstractTokenRefreshableOAuth2Exchanger;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.configuration.OAuth2ExchangerMetadata;
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.function.api.OAuth2APIExchangeCallbackQueryForToken;
@@ -35,6 +34,8 @@ import com.github.wautsns.easy.oauth2.core.request.model.response.AbstractOAuth2
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.model.GiteeOAuth2Token;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.kernel.exchange.model.GiteeOAuth2User;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,7 +44,8 @@ import org.jetbrains.annotations.NotNull;
  * @author wautsns
  * @since May 11, 2021
  */
-public final class GiteeOAuth2Exchanger extends AbstractTokenRefreshableOAuth2Exchanger<GiteeOAuth2ApplicationProperties, GiteeOAuth2Token, GiteeOAuth2User> {
+public final class GiteeOAuth2Exchanger
+        extends AbstractTokenRefreshableOAuth2Exchanger<GiteeOAuth2ApplicationProperties, GiteeOAuth2Token, GiteeOAuth2User> {
 
     // ##################################################################################
     // #################### initialize oauth2 api #######################################
@@ -145,7 +147,8 @@ public final class GiteeOAuth2Exchanger extends AbstractTokenRefreshableOAuth2Ex
      *
      * @param metadata metadata
      */
-    public GiteeOAuth2Exchanger(@NotNull OAuth2ExchangerMetadata<GiteeOAuth2ApplicationProperties> metadata) {
+    public GiteeOAuth2Exchanger(
+            @NotNull OAuth2ExchangerMetadata<GiteeOAuth2ApplicationProperties> metadata) {
         super(metadata);
     }
 

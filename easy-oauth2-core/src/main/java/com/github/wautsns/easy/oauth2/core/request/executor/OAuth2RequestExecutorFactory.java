@@ -16,6 +16,7 @@
 package com.github.wautsns.easy.oauth2.core.request.executor;
 
 import com.github.wautsns.easy.oauth2.core.request.executor.configuration.OAuth2RequestExecutorProperties;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,11 +47,12 @@ public interface OAuth2RequestExecutorFactory<Q> {
     // ##################################################################################
 
     /**
-     * Create a default request executor.
+     * Create default request executor.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The request executor is created with {@link OAuth2RequestExecutorProperties#DEFAULT}.</li>
+     * <li>The method equals to {@link #create(OAuth2RequestExecutorProperties) create}({@link
+     * OAuth2RequestExecutorProperties#DEFAULT}).</li>
      * </ul>
      *
      * @return request executor
@@ -61,11 +63,12 @@ public interface OAuth2RequestExecutorFactory<Q> {
     }
 
     /**
-     * Create a request executor.
+     * Create request executor.
      *
      * @param properties request executor properties
      * @return request executor
      */
-    @NotNull AbstractOAuth2RequestExecutor<Q> create(@NotNull OAuth2RequestExecutorProperties properties);
+    @NotNull AbstractOAuth2RequestExecutor<Q> create(
+            @NotNull OAuth2RequestExecutorProperties properties);
 
 }

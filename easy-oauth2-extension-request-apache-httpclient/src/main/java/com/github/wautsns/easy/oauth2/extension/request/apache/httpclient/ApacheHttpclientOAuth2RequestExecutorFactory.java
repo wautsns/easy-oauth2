@@ -17,16 +17,18 @@ package com.github.wautsns.easy.oauth2.extension.request.apache.httpclient;
 
 import com.github.wautsns.easy.oauth2.core.request.executor.OAuth2RequestExecutorFactory;
 import com.github.wautsns.easy.oauth2.core.request.executor.configuration.OAuth2RequestExecutorProperties;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * OAuth2 request executor factory based on apache httpclient.
+ * Apache httpclient oauth2 request executor factory.
  *
  * @author wautsns
  * @since Mar 30, 2021
  */
-public final class OAuth2RequestExecutorFactoryBasedOnApacheHttpclient implements OAuth2RequestExecutorFactory<HttpRequestBase> {
+public final class ApacheHttpclientOAuth2RequestExecutorFactory
+        implements OAuth2RequestExecutorFactory<HttpRequestBase> {
 
     @Override
     public boolean enabled() {
@@ -39,9 +41,9 @@ public final class OAuth2RequestExecutorFactoryBasedOnApacheHttpclient implement
     }
 
     @Override
-    public @NotNull OAuth2RequestExecutorBasedOnApacheHttpclient create(
+    public @NotNull ApacheHttpclientOAuth2RequestExecutor create(
             @NotNull OAuth2RequestExecutorProperties properties) {
-        return new OAuth2RequestExecutorBasedOnApacheHttpclient(properties);
+        return new ApacheHttpclientOAuth2RequestExecutor(properties);
     }
 
 }

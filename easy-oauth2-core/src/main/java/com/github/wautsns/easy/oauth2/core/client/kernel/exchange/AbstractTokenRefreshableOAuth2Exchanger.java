@@ -25,7 +25,9 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.token.Ab
 import com.github.wautsns.easy.oauth2.core.client.kernel.exchange.model.user.AbstractOAuth2User;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.exception.specific.OAuth2AccessTokenExpiredException;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -56,7 +58,7 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
     /**
      * Return callbacks after refreshing token.
      *
-     * @return callbacks after refreshing token
+     * @return {@link #callbacksAfterRefreshingToken}
      */
     public final @NotNull List<@NotNull OAuth2CallbackAfterRefreshingToken<T>> callbacksAfterRefreshingToken() {
         return callbacksAfterRefreshingToken;
@@ -71,7 +73,10 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
         log.debug("Ready to refresh token. token: {}", token.raw());
         try {
             T refreshedToken = refreshToken.refreshToken(token);
-            log.debug("Token has been refreshed. old: {}, new: {}", token.raw(), refreshedToken.raw());
+            log.debug(
+                    "Token has been refreshed. new: {}, old: {}",
+                    refreshedToken.raw(), token.raw()
+            );
             for (OAuth2CallbackAfterRefreshingToken<T> callback : callbacksAfterRefreshingToken) {
                 callback.afterRefreshingToken(token, refreshedToken);
             }
@@ -89,9 +94,10 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
     /**
      * Construct an instance.
      *
-     * @param metadata metadata
+     * @param metadata {@link #metadata}
      */
-    protected AbstractTokenRefreshableOAuth2Exchanger(@NotNull OAuth2ExchangerMetadata<A> metadata) {
+    protected AbstractTokenRefreshableOAuth2Exchanger(
+            @NotNull OAuth2ExchangerMetadata<A> metadata) {
         super(metadata);
         this.refreshToken = Objects.requireNonNull(initializeRefreshToken());
     }
@@ -109,7 +115,10 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
             try {
                 return api.exchangeForUserIdentifier(token);
             } catch (OAuth2AccessTokenExpiredException e) {
-                log.warn("Try to refresh token automatically due to expired token. token: {}", token.raw(), e);
+                log.warn(
+                        "Try to refresh token automatically due to expired token. token: {}",
+                        token.raw(), e
+                );
                 return api.exchangeForUserIdentifier(refreshToken(token));
             }
         };
@@ -124,7 +133,10 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
             try {
                 return api.exchangeForUser(token);
             } catch (OAuth2AccessTokenExpiredException e) {
-                log.warn("Try to refresh token automatically due to expired token. token: {}", token.raw(), e);
+                log.warn(
+                        "Try to refresh token automatically due to expired token. token: {}",
+                        token.raw(), e
+                );
                 return api.exchangeForUser(refreshToken(token));
             }
         };
@@ -136,6 +148,7 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * @return oauth2 api: exchange token for user identifier
      * @implNote The implementation method does not require attention to {@link
      *         OAuth2AccessTokenExpiredException}
+     * @see #exchangeForUserIdentifier(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUserIdentifier<T> initializeAPIExchangeTokenForUserIdentifierWithoutRefreshingExpiredToken();
 
@@ -145,6 +158,7 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * @return oauth2 api: exchange token for user
      * @implNote The implementation method does not require attention to {@link
      *         OAuth2AccessTokenExpiredException}
+     * @see #exchangeForUser(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUser<T, U> initializeAPIExchangeTokenForUserWithoutRefreshingExpiredToken();
 
@@ -152,6 +166,7 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * Initialize oauth2 api: refresh token.
      *
      * @return oauth2 api: refresh token
+     * @see #refreshToken(T)
      */
     protected abstract @NotNull OAuth2APIRefreshToken<T> initializeRefreshToken();
 

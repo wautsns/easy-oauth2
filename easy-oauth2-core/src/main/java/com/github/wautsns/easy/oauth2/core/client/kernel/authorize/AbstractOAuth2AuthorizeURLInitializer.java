@@ -22,10 +22,12 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration
 import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.function.operation.OAuth2OperationInitializeAuthorizeURL;
 import com.github.wautsns.easy.oauth2.core.exception.OAuth2Exception;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 /**
@@ -45,7 +47,7 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
 
     // ##################################################################################
 
-    /** Metadata of {@code this} authorize url initializer. */
+    /** Metadata. */
     protected final @NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata;
 
     /** OAuth2 operation: initialize authorize url. */
@@ -63,7 +65,7 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
     /**
      * Return identifier.
      *
-     * @return identifier, for more details see {@link OAuth2AuthorizeURLInitializerMetadata#identifier()}
+     * @return {@link OAuth2AuthorizeURLInitializerMetadata#identifier() identifier}
      */
     public final @NotNull String identifier() {
         return metadata.identifier();
@@ -74,7 +76,8 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
     // ##################################################################################
 
     @Override
-    public final @NotNull OAuth2URL initializeAuthorizeURL(@Nullable String state) throws OAuth2Exception {
+    public final @NotNull OAuth2URL initializeAuthorizeURL(@Nullable String state)
+            throws OAuth2Exception {
         log.debug("Ready to initialize authorize url. state: {}", state);
         try {
             OAuth2URL url = initializeAuthorizeURL.initializeAuthorizeURL(state);
@@ -93,11 +96,13 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
     /**
      * Construct an instance.
      *
-     * @param metadata metadata
+     * @param metadata {@link #metadata}
      */
-    protected AbstractOAuth2AuthorizeURLInitializer(@NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata) {
+    protected AbstractOAuth2AuthorizeURLInitializer(
+            @NotNull OAuth2AuthorizeURLInitializerMetadata<A, O> metadata) {
         this.metadata = Objects.requireNonNull(metadata);
-        this.initializeAuthorizeURL = Objects.requireNonNull(initializeOperationInitializeAuthorizeURL());
+        this.initializeAuthorizeURL =
+                Objects.requireNonNull(initializeOperationInitializeAuthorizeURL());
     }
 
     // ##################################################################################

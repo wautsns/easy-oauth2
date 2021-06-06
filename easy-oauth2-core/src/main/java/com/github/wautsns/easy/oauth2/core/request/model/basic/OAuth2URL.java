@@ -16,8 +16,10 @@
 package com.github.wautsns.easy.oauth2.core.request.model.basic;
 
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -42,7 +44,7 @@ public final class OAuth2URL {
     /**
      * Return url without query and anchor.
      *
-     * @return url without query and anchor
+     * @return {@link #urlWithoutQueryAndAnchor}
      */
     public @NotNull String urlWithoutQueryAndAnchor() {
         return urlWithoutQueryAndAnchor;
@@ -51,7 +53,7 @@ public final class OAuth2URL {
     /**
      * Return query.
      *
-     * @return query
+     * @return {@link #query}
      */
     public @NotNull OAuth2URLQuery query() {
         return query;
@@ -65,7 +67,7 @@ public final class OAuth2URL {
      * <li>The anchor has been url encoded.</li>
      * </ul>
      *
-     * @return anchor, or {@code null} if the anchor does not assign
+     * @return {@link #anchor}, or {@code null} if the anchor does not assign
      */
     public @Nullable String anchor() {
         return anchor;
@@ -74,23 +76,24 @@ public final class OAuth2URL {
     // ##################################################################################
 
     /**
-     * Return url in text format.
+     * Write {@code this} object as text.
      *
-     * @return url in text format
-     * @see OAuth2URLQuery#asText()
+     * @return text
      */
-    public @NotNull String asText() {
+    public @NotNull String writeAsText() {
         StringBuilder url = new StringBuilder();
         url.append(urlWithoutQueryAndAnchor);
-        url.append(query.asText());
-        if (anchor != null) { url.append('#').append(anchor); }
+        url.append(query.writeAsText());
+        if (anchor != null) {
+            url.append('#').append(anchor);
+        }
         return url.toString();
     }
 
     /**
-     * Return a new instance by deep copying {@code this} object.
+     * Return new instance by deep copying {@code this} object.
      *
-     * @return a copy of {@code this} object
+     * @return copy of {@code this} object
      */
     public @NotNull OAuth2URL copy() {
         return new OAuth2URL(this);
@@ -105,11 +108,10 @@ public final class OAuth2URL {
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the {@code anchor} is {@code null}, the anchor will not appear in {@link #asText()}</li>
      * <li>The {@code anchor} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param anchor anchor
+     * @param anchor {@link #anchor}
      * @return self reference
      */
     public @NotNull OAuth2URL anchor(@Nullable String anchor) {
@@ -124,10 +126,12 @@ public final class OAuth2URL {
     /**
      * Construct an instance.
      *
-     * @param urlWithoutQueryAndAnchor url without query and anchor
+     * @param urlWithoutQueryAndAnchor {@link #urlWithoutQueryAndAnchor}
      * @param estimatedNumberOfQueryParameterNames estimated number of query parameter names
+     *         names
      */
-    public OAuth2URL(@NotNull String urlWithoutQueryAndAnchor, int estimatedNumberOfQueryParameterNames) {
+    public OAuth2URL(
+            @NotNull String urlWithoutQueryAndAnchor, int estimatedNumberOfQueryParameterNames) {
         this.urlWithoutQueryAndAnchor = Objects.requireNonNull(urlWithoutQueryAndAnchor);
         this.query = new OAuth2URLQuery(estimatedNumberOfQueryParameterNames);
     }
@@ -150,7 +154,7 @@ public final class OAuth2URL {
 
     @Override
     public @NotNull String toString() {
-        return asText();
+        return writeAsText();
     }
 
 }

@@ -16,12 +16,16 @@
 package com.github.wautsns.easy.oauth2.core.request.model.basic;
 
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * OAuth2 url query.
@@ -31,34 +35,26 @@ import java.util.Map;
  */
 public final class OAuth2URLQuery {
 
-    /** Estimated number of parameter names. */
-    private final int estimatedNumberOfParameterNames;
-    /** Raw parameters. */
-    private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> raw;
+    /** Estimated number of names. */
+    private final int estimatedNumberOfNames;
+    /** Delegate. */
+    private final @NotNull LinkedHashMap<@NotNull String, @Nullable Object> delegate;
 
     // ##################################################################################
     // #################### enhanced getter #############################################
     // ##################################################################################
 
     /**
-     * Return query in text format.
+     * Write {@code this} object as text.
      *
-     * <ul>
-     * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If {@code this} query has no parameter, an empty string {@code ""} will be returned, otherwise the text like
-     * {@code "?key1=urlEncodedValue1&key2=urlEncodedValue2"} will be returned.</li>
-     * <li>If there are more than one value associated with a parameter name, the text like {@code
-     * "?key=urlEncodedValue1&key=urlEncodedValue2"} will be returned.</li>
-     * </ul>
-     *
-     * @return query in text format
+     * @return text
      */
     @SuppressWarnings("unchecked")
-    public @NotNull String asText() {
-        if (raw.isEmpty()) { return ""; }
+    public @NotNull String writeAsText() {
+        if (delegate.isEmpty()) { return ""; }
         StringBuilder query = new StringBuilder();
         query.append('?');
-        for (Map.Entry<String, Object> entry : raw.entrySet()) {
+        for (Map.Entry<String, Object> entry : delegate.entrySet()) {
             String name = entry.getKey();
             Object temporary = entry.getValue();
             if (temporary instanceof String) {
@@ -81,9 +77,9 @@ public final class OAuth2URLQuery {
     }
 
     /**
-     * Return a new instance by deep copying {@code this} object.
+     * Return new instance by deep copying {@code this} object.
      *
-     * @return a copy of {@code this} object
+     * @return copy of {@code this} object
      */
     public @NotNull OAuth2URLQuery copy() {
         return new OAuth2URLQuery(this);
@@ -94,73 +90,83 @@ public final class OAuth2URLQuery {
     // ##################################################################################
 
     /**
-     * Add a parameter which the name is unique.
+     * Add unique query item.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>The parameter will only appear once in the {@link #asText()}.</li>
-     * <li>If the {@code value} is {@code null}, the parameter in {@link #asText()} is like {@code "key1&key2"}.</li>
+     * <li>If the {@code value} is {@code null}, query text will be {@code "name&name2=123"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param value parameter value
+     * @param name query item name
+     * @param value query item value
      * @return self reference
      */
     public @NotNull OAuth2URLQuery unique(@NotNull String name, @Nullable String value) {
-        raw.put(name, OAuth2DataUtils.encodeWithURLEncoder(value));
+        delegate.put(name, OAuth2DataUtils.encodeWithURLEncoder(value));
         return this;
     }
 
     /**
-     * Add a parameter which the name is repeatable.
+     * Add repeatable query item.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
-     * <li>If the parameter of the {@code name} is added more than once, the parameter will also appear in the {@link
-     * #asText()} for the corresponding number of times. And the text is like {@code "key=value1&key=value2"}.</li>
-     * <li>If the {@code value} is {@code null}, the parameter in {@link #asText()} is like {@code "key1&key2"}.</li>
+     * <li>If the {@code value} is {@code null}, query text will be {@code "name&name2=123"}.</li>
      * <li>The {@code value} will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param value parameter value
+     * @param name query item name
+     * @param value query item value
      * @return self reference
      */
     @SuppressWarnings("unchecked")
     public @NotNull OAuth2URLQuery repeatable(@NotNull String name, @Nullable String value) {
         value = OAuth2DataUtils.encodeWithURLEncoder(value);
-        Object temporary = raw.get(name);
+        Object temporary = delegate.get(name);
         if (temporary == null) {
-            raw.put(name, value);
+            delegate.put(name, value);
         } else if (temporary instanceof List) {
             ((List<String>) temporary).add(value);
         } else {
             List<String> values = new LinkedList<>();
             values.add((String) temporary);
             values.add(value);
-            raw.put(name, values);
+            delegate.put(name, values);
         }
         return this;
     }
 
     /**
-     * Add parameters which the name is repeatable.
+     * Add repeatable query items.
      *
      * <ul>
      * <li style="list-style-type:none">########## Notes ###############</li>
      * <li>If the {@code values} is {@code null}, the operation will be ignored.</li>
+     * <li>If value is {@code null}, query text will be {@code "name&name2=123"}.</li>
+     * <li>Value will be automatically url encoded.</li>
      * </ul>
      *
-     * @param name parameter name
-     * @param values parameter values
+     * @param name query item name
+     * @param values query item values
      * @return self reference
      * @see #repeatable(String, String)
      */
-    public @NotNull OAuth2URLQuery repeatable(@NotNull String name, @Nullable Iterable<String> values) {
+    @SuppressWarnings("unchecked")
+    public @NotNull OAuth2URLQuery repeatable(
+            @NotNull String name, @Nullable Iterable<String> values) {
         if (values == null) { return this; }
-        for (String value : values) {
-            repeatable(name, value);
+        LinkedList<String> urlEncodedValues = StreamSupport.stream(values.spliterator(), false)
+                .map(OAuth2DataUtils::encodeWithURLEncoder)
+                .collect(Collectors.toCollection(LinkedList::new));
+        Object temporary = delegate.get(name);
+        if (temporary == null) {
+            delegate.put(name, urlEncodedValues);
+        } else if (temporary instanceof List) {
+            ((List<String>) temporary).addAll(urlEncodedValues);
+        } else {
+            urlEncodedValues.addFirst((String) temporary);
+            delegate.put(name, urlEncodedValues);
         }
         return this;
     }
@@ -172,11 +178,11 @@ public final class OAuth2URLQuery {
     /**
      * Construct an instance.
      *
-     * @param estimatedNumberOfParameterNames estimated number of parameter names
+     * @param estimatedNumberOfNames {@link #estimatedNumberOfNames}
      */
-    public OAuth2URLQuery(int estimatedNumberOfParameterNames) {
-        this.estimatedNumberOfParameterNames = estimatedNumberOfParameterNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
+    public OAuth2URLQuery(int estimatedNumberOfNames) {
+        this.estimatedNumberOfNames = estimatedNumberOfNames;
+        this.delegate = new LinkedHashMap<>(this.estimatedNumberOfNames, 1F);
     }
 
     /**
@@ -187,12 +193,14 @@ public final class OAuth2URLQuery {
      */
     @SuppressWarnings("unchecked")
     protected OAuth2URLQuery(@NotNull OAuth2URLQuery template) {
-        this.estimatedNumberOfParameterNames = template.estimatedNumberOfParameterNames;
-        this.raw = new LinkedHashMap<>(this.estimatedNumberOfParameterNames, 1F);
-        for (Map.Entry<String, Object> entry : template.raw.entrySet()) {
+        this.estimatedNumberOfNames = template.estimatedNumberOfNames;
+        this.delegate = new LinkedHashMap<>(this.estimatedNumberOfNames, 1F);
+        for (Map.Entry<String, Object> entry : template.delegate.entrySet()) {
             Object value = entry.getValue();
-            if (value instanceof List) { value = new LinkedList<>((List<String>) value); }
-            this.raw.put(entry.getKey(), value);
+            if (value instanceof List) {
+                value = new LinkedList<>((List<String>) value);
+            }
+            this.delegate.put(entry.getKey(), value);
         }
     }
 
@@ -202,7 +210,7 @@ public final class OAuth2URLQuery {
 
     @Override
     public @NotNull String toString() {
-        return asText();
+        return writeAsText();
     }
 
 }

@@ -1,1 +1,1 @@
-com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.OAuth2RequestExecutorFactoryBasedOnApacheHttpclient
+com.github.wautsns.easy.oauth2.extension.request.apache.httpclient.ApacheHttpclientOAuth2RequestExecutorFactory

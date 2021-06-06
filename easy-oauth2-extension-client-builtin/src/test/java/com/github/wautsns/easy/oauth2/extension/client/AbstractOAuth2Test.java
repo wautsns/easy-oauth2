@@ -15,7 +15,8 @@
  */
 package com.github.wautsns.easy.oauth2.extension.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.junit.Assert.assertNotNull;
+
 import com.github.wautsns.easy.oauth2.core.client.OAuth2Client;
 import com.github.wautsns.easy.oauth2.core.client.assembly.OAuth2PlatformAssemblyFactory;
 import com.github.wautsns.easy.oauth2.core.client.assembly.OAuth2PlatformAssemblyFactoryManager;
@@ -35,11 +36,13 @@ import com.github.wautsns.easy.oauth2.core.request.executor.OAuth2RequestExecuto
 import com.github.wautsns.easy.oauth2.core.request.executor.configuration.OAuth2RequestExecutorProperties;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.core.request.util.OAuth2DataUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
@@ -48,12 +51,13 @@ import java.util.UUID;
  * Abstract oauth2 test.
  *
  * <ul>
- * <li style="list-style-type:none">########## VM options ###############</li>
+ * <li style="list-style-type:none">########## Supported VM options ###############</li>
  * <li>-Dclient-id=${clientId}</li>
  * <li>-Dclient-secret=${clientSecret}</li>
- * <li>-Dauthorize-callback=${callbackURL}</li>
+ * <li>-Dauthorize-callback=${authorizeCallback}</li>
  * <li>-Dconnect-timeout=${connectTimeout} (e.g. PT30S)</li>
  * <li>-Dsocket-timeout=${socketTimeout} (e.g. PT30S)</li>
+ * <li>-Dretry-times=${retryTimes} (e.g. 3)</li>
  * <li>-Dproxy=${proxy}</li>
  * </ul>
  *
@@ -64,7 +68,7 @@ import java.util.UUID;
 public abstract class AbstractOAuth2Test {
 
     /** Logger. */
-    private final @NotNull Logger log = LoggerFactory.getLogger(getClass());
+    protected final @NotNull Logger log = LoggerFactory.getLogger(getClass());
 
     // ##################################################################################
 
@@ -72,30 +76,32 @@ public abstract class AbstractOAuth2Test {
     private final @NotNull String platform;
 
     // ##################################################################################
+    // #################### test ########################################################
+    // ##################################################################################
 
     @Test
     public final void testAuthorize() throws OAuth2Exception {
         String state = UUID.randomUUID().toString();
         OAuth2URL authorizeURL = OAuth2Client.authorizeURL(platform, state);
-        Assert.assertNotNull(authorizeURL);
-        log.info("authorize url: {}", authorizeURL.asText());
+        assertNotNull(authorizeURL);
+        log.info("authorize url: {}", authorizeURL.writeAsText());
     }
-
-    // ##################################################################################
 
     @Test
     public final void testExchange() throws OAuth2Exception {
-        JsonNode raw = OAuth2DataUtils.createObjectNode().put("code", authorizeCode());
-        OAuth2CallbackQuery query = new OAuth2CallbackQuery(raw);
+        ObjectNode rawQuery = OAuth2DataUtils.createObjectNode().put("code", authorizeCode());
+        OAuth2CallbackQuery query = new OAuth2CallbackQuery(rawQuery);
         AbstractOAuth2Exchanger exchanger = OAuth2Client.exchanger(platform);
-        if (exchanger instanceof AbstractTokenAvailableOAuth2Exchanger) {
-            testExchange(query, (AbstractTokenAvailableOAuth2Exchanger) exchanger);
-        } else if (exchanger instanceof AbstractTokenRefreshableOAuth2Exchanger) {
+        if (exchanger instanceof AbstractTokenRefreshableOAuth2Exchanger) {
             testExchange(query, (AbstractTokenRefreshableOAuth2Exchanger) exchanger);
+        } else if (exchanger instanceof AbstractTokenAvailableOAuth2Exchanger) {
+            testExchange(query, (AbstractTokenAvailableOAuth2Exchanger) exchanger);
         } else {
             testExchange(query, exchanger);
         }
     }
+
+    // ##################################################################################
 
     /**
      * Test oauth2 function
@@ -104,7 +110,9 @@ public abstract class AbstractOAuth2Test {
      * @param exchanger exchanger
      * @throws OAuth2Exception if oauth2 related error occurs
      */
-    private void testExchange(@NotNull OAuth2CallbackQuery query, @NotNull AbstractOAuth2Exchanger exchanger) throws OAuth2Exception {
+    private void testExchange(
+            @NotNull OAuth2CallbackQuery query, @NotNull AbstractOAuth2Exchanger exchanger)
+            throws OAuth2Exception {
         exchanger.exchangeForUser(query);
     }
 
@@ -116,13 +124,14 @@ public abstract class AbstractOAuth2Test {
      * @throws OAuth2Exception if oauth2 related error occurs
      */
     private void testExchange(
-            @NotNull OAuth2CallbackQuery query, @NotNull AbstractTokenAvailableOAuth2Exchanger exchanger) throws OAuth2Exception {
+            @NotNull OAuth2CallbackQuery query,
+            @NotNull AbstractTokenAvailableOAuth2Exchanger exchanger) throws OAuth2Exception {
         AbstractOAuth2Token token = exchanger.exchangeForToken(query);
-        Assert.assertNotNull(token);
+        assertNotNull(token);
         AbstractOAuth2User user = exchanger.exchangeForUser(token);
-        Assert.assertNotNull(user);
+        assertNotNull(user);
         String userIdentifier = exchanger.exchangeForUserIdentifier(token);
-        Assert.assertNotNull(userIdentifier);
+        assertNotNull(userIdentifier);
     }
 
     /**
@@ -133,17 +142,18 @@ public abstract class AbstractOAuth2Test {
      * @throws OAuth2Exception if oauth2 related error occurs
      */
     private void testExchange(
-            @NotNull OAuth2CallbackQuery query, @NotNull AbstractTokenRefreshableOAuth2Exchanger exchanger) throws OAuth2Exception {
+            @NotNull OAuth2CallbackQuery query,
+            @NotNull AbstractTokenRefreshableOAuth2Exchanger exchanger) throws OAuth2Exception {
         AbstractOAuth2Token token = exchanger.exchangeForToken(query);
-        Assert.assertNotNull(token);
+        assertNotNull(token);
         AbstractOAuth2User user = exchanger.exchangeForUser(token);
-        Assert.assertNotNull(user);
+        assertNotNull(user);
         String userIdentifier = exchanger.exchangeForUserIdentifier(token);
-        Assert.assertNotNull(userIdentifier);
+        assertNotNull(userIdentifier);
         token = exchanger.refreshToken((AbstractRefreshableOAuth2Token) token);
-        Assert.assertNotNull(token);
+        assertNotNull(token);
         user = exchanger.exchangeForUser(token);
-        Assert.assertNotNull(user);
+        assertNotNull(user);
     }
 
     // ##################################################################################
@@ -161,31 +171,29 @@ public abstract class AbstractOAuth2Test {
     // #################### constructor #################################################
     // ##################################################################################
 
+    /** Construct an instance. */
     protected AbstractOAuth2Test() {
         String clientId = Objects.requireNonNull(System.getProperty("client-id"));
         String clientSecret = Objects.requireNonNull(System.getProperty("client-secret"));
         String authorizeCallback = Objects.requireNonNull(System.getProperty("authorize-callback"));
-        AbstractOAuth2ApplicationProperties applicationProperties = initializeApplicationProperties(
-                clientId, clientSecret, authorizeCallback
-        );
+        AbstractOAuth2ApplicationProperties applicationProperties =
+                initializeApplicationProperties(clientId, clientSecret, authorizeCallback);
         this.platform = applicationProperties.platform();
-        OAuth2PlatformAssemblyFactory factory = OAuth2PlatformAssemblyFactoryManager.instance(platform);
-        OAuth2Client.register(
-                factory.createAuthorizeURLInitializer(
-                        new OAuth2AuthorizeURLInitializerMetadata(
-                                applicationProperties,
-                                initializeAuthorizationProperties()
-                        )
+        OAuth2PlatformAssemblyFactory factory =
+                OAuth2PlatformAssemblyFactoryManager.factory(platform);
+        OAuth2Client.register(factory.createAuthorizeURLInitializer(
+                new OAuth2AuthorizeURLInitializerMetadata(
+                        applicationProperties,
+                        initializeAuthorizationProperties()
                 )
-        );
-        OAuth2Client.register(
-                factory.createExchanger(
-                        new OAuth2ExchangerMetadata(
-                                applicationProperties,
-                                OAuth2RequestExecutorFactoryManager.instance().create(initializeRequestExecutorProperties())
-                        )
+        ));
+        OAuth2Client.register(factory.createExchanger(
+                new OAuth2ExchangerMetadata(
+                        applicationProperties,
+                        OAuth2RequestExecutorFactoryManager.factory()
+                                .create(initializeRequestExecutorProperties())
                 )
-        );
+        ));
     }
 
     // ##################################################################################
@@ -199,7 +207,8 @@ public abstract class AbstractOAuth2Test {
      * @return application properties
      */
     protected abstract @NotNull AbstractOAuth2ApplicationProperties initializeApplicationProperties(
-            @NotNull String clientId, @NotNull String clientSecret, @NotNull String authorizeCallback);
+            @NotNull String clientId, @NotNull String clientSecret,
+            @NotNull String authorizeCallback);
 
     /**
      * Initialize authorization properties.
@@ -214,20 +223,24 @@ public abstract class AbstractOAuth2Test {
      * @return request executor properties
      */
     private @NotNull OAuth2RequestExecutorProperties initializeRequestExecutorProperties() {
-        OAuth2RequestExecutorProperties requestExecutorProperties = new OAuth2RequestExecutorProperties();
+        OAuth2RequestExecutorProperties properties = new OAuth2RequestExecutorProperties();
         String connectionTimeout = System.getProperty("connect-timeout");
         if (connectionTimeout != null) {
-            requestExecutorProperties.setConnectTimeout(Duration.parse(connectionTimeout));
+            properties.setConnectTimeout(Duration.parse(connectionTimeout));
         }
         String socketTimeout = System.getProperty("socket-timeout");
         if (socketTimeout != null) {
-            requestExecutorProperties.setSocketTimeout(Duration.parse(socketTimeout));
+            properties.setSocketTimeout(Duration.parse(socketTimeout));
+        }
+        String retryTimes = System.getProperty("retry-times");
+        if (retryTimes != null) {
+            properties.setRetryTimes(Integer.valueOf(retryTimes));
         }
         String proxy = System.getProperty("proxy");
         if (proxy != null) {
-            requestExecutorProperties.setProxy(proxy);
+            properties.setProxy(proxy);
         }
-        return requestExecutorProperties;
+        return properties.rewriteNullToDefaultValue();
     }
 
 }
