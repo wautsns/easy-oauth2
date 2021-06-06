@@ -113,7 +113,6 @@ public abstract class AbstractOAuth2AuthorizeURLInitializer<A extends AbstractOA
      * Initialize oauth2 operation: initialize authorize url.
      *
      * @return oauth2 operation: initialize authorize url
-     * @see #initializeAuthorizeURL(String)
      */
     protected abstract @NotNull OAuth2OperationInitializeAuthorizeURL initializeOperationInitializeAuthorizeURL();
 
