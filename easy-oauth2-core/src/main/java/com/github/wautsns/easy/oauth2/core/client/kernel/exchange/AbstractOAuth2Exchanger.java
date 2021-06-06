@@ -148,7 +148,6 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
      * Initialize oauth2 api: exchange callback query for user identifier.
      *
      * @return oauth2 api: exchange callback query for user identifier
-     * @see #exchangeForUserIdentifier(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForUserIdentifier initializeAPIExchangeCallbackQueryForUserIdentifier();
 
@@ -156,7 +155,6 @@ public abstract class AbstractOAuth2Exchanger<A extends AbstractOAuth2Applicatio
      * Initialize oauth2 api: exchange callback query for user.
      *
      * @return oauth2 api: exchange callback query for user
-     * @see #exchangeForUser(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForUser<U> initializeAPIExchangeCallbackQueryForUser();
 

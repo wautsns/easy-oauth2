@@ -148,7 +148,6 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * @return oauth2 api: exchange token for user identifier
      * @implNote The implementation method does not require attention to {@link
      *         OAuth2AccessTokenExpiredException}
-     * @see #exchangeForUserIdentifier(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUserIdentifier<T> initializeAPIExchangeTokenForUserIdentifierWithoutRefreshingExpiredToken();
 
@@ -158,7 +157,6 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * @return oauth2 api: exchange token for user
      * @implNote The implementation method does not require attention to {@link
      *         OAuth2AccessTokenExpiredException}
-     * @see #exchangeForUser(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUser<T, U> initializeAPIExchangeTokenForUserWithoutRefreshingExpiredToken();
 
@@ -166,7 +164,6 @@ public abstract class AbstractTokenRefreshableOAuth2Exchanger<A extends Abstract
      * Initialize oauth2 api: refresh token.
      *
      * @return oauth2 api: refresh token
-     * @see #refreshToken(T)
      */
     protected abstract @NotNull OAuth2APIRefreshToken<T> initializeRefreshToken();
 

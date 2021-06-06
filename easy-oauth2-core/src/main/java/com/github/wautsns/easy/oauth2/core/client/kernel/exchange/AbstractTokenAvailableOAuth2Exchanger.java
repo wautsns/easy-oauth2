@@ -132,7 +132,7 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange callback query for token.
      *
      * @return oauth2 api: exchange callback query for token
-     * @see #exchangeForToken(OAuth2CallbackQuery)
+     * @see OAuth2APIExchangeCallbackQueryForToken#exchangeForToken(OAuth2CallbackQuery)
      */
     protected abstract @NotNull OAuth2APIExchangeCallbackQueryForToken<T> initializeAPIExchangeCallbackQueryForToken();
 
@@ -140,7 +140,6 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange token for user identifier.
      *
      * @return oauth2 api: exchange token for user identifier
-     * @see #exchangeForUserIdentifier(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUserIdentifier<T> initializeAPIExchangeTokenForUserIdentifier();
 
@@ -148,7 +147,6 @@ public abstract class AbstractTokenAvailableOAuth2Exchanger<A extends AbstractOA
      * Initialize oauth2 api: exchange token for user.
      *
      * @return oauth2 api: exchange token for user
-     * @see #exchangeForUser(T)
      */
     protected abstract @NotNull OAuth2APIExchangeTokenForUser<T, U> initializeAPIExchangeTokenForUser();
 
