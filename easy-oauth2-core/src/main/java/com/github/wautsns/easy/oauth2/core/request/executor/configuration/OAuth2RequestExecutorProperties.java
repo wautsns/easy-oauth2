@@ -34,8 +34,8 @@ public final class OAuth2RequestExecutorProperties {
      *
      * <ul>
      * <li style="list-style-type:none">########## Default Properties  ###############</li>
-     * <li>connectTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT2S")}</li>
-     * <li>socketTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT5S")}</li>
+     * <li>connectTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT5S")}</li>
+     * <li>socketTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT3S")}</li>
      * <li>maxConcurrentRequests: {@code 64}</li>
      * <li>maxIdleTime: {@link Duration#parse(CharSequence) Duration.parse("PT5M")}</li>
      * <li>keepAliveTimeout: {@link Duration#parse(CharSequence) Duration.parse("PT3M")}</li>
@@ -46,8 +46,8 @@ public final class OAuth2RequestExecutorProperties {
      */
     public static final @NotNull OAuth2RequestExecutorProperties DEFAULT =
             new OAuth2RequestExecutorProperties()
-                    .setConnectTimeout(Duration.parse("PT2S"))
-                    .setSocketTimeout(Duration.parse("PT5S"))
+                    .setConnectTimeout(Duration.parse("PT5S"))
+                    .setSocketTimeout(Duration.parse("PT3S"))
                     .setMaxConcurrentRequests(64)
                     .setMaxIdleTime(Duration.parse("PT5M"))
                     .setKeepAliveTimeout(Duration.parse("PT3M"))
