@@ -232,8 +232,8 @@ public final class OAuth2Client {
         E previous = (E) exchangerGroupByIdentifier.put(identifier, exchanger);
         if (previous == null) {
             log.info(
-                    "An exchanger has been registered. hash: {}, platform: {}, identifier: {}",
-                    exchanger.hashCode(), platform, identifier
+                    "An exchanger has been registered. platform: {}, identifier: {}",
+                    platform, identifier
             );
         } else {
             log.warn(
