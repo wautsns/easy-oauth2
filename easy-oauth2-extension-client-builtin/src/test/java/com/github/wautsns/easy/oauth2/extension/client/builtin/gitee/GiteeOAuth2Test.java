@@ -20,7 +20,7 @@ import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration
 import com.github.wautsns.easy.oauth2.extension.client.AbstractOAuth2Test;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2ApplicationProperties;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2AuthorizationProperties;
-import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.GiteeOAuth2Permission;
+import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.constant.GiteeOAuth2Permission;
 
 import org.jetbrains.annotations.NotNull;
 

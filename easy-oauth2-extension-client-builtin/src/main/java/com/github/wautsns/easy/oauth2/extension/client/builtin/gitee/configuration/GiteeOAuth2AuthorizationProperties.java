@@ -18,6 +18,7 @@ package com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configurat
 import com.github.wautsns.easy.oauth2.core.client.kernel.authorize.configuration.AbstractOAuth2AuthorizationProperties;
 import com.github.wautsns.easy.oauth2.core.request.model.basic.OAuth2URL;
 import com.github.wautsns.easy.oauth2.extension.client.builtin.BuiltinOAuth2Platform;
+import com.github.wautsns.easy.oauth2.extension.client.builtin.gitee.configuration.constant.GiteeOAuth2Permission;
 
 import org.jetbrains.annotations.NotNull;
 
